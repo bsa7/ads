@@ -5,3 +5,5 @@ echo -e "\e[0;32m push to 120-42 server\e[0m"
 git push u12042 master
 echo -e "\e[0;32m push to u1-16 server\e[0m"
 git push u116 master
+echo -e "\e[0;32m push to github\e[0m"
+git push github master

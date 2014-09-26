@@ -7,3 +7,5 @@ git push u116 master
 git push u12042 master
 git push github master
 cap deploy
+cap puma:stop
+cap puma:start

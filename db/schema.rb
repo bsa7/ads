@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140926053259) do
+ActiveRecord::Schema.define(version: 20140926111826) do
 
   create_table "classified_ads", force: true do |t|
     t.text     "plain_text"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20140926053259) do
     t.string   "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "filename"
   end
 
 end

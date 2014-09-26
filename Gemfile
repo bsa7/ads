@@ -24,8 +24,8 @@ gem 'unicode'
 #gem 'fileutils'
 #gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
-gem 'sdoc', '~> 0.4.0',          group: :doc
-gem 'spring',        group: :development
+gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'spring', group: :development
 #gem 'hamlbars'
 gem 'handlebars_assets'
 #end
@@ -41,8 +41,8 @@ group :test do
   gem 'launchy'
 end
 #gem 'acts-as-taggable-on'
-gem "paperclip", "~> 4.2"
-gem "jquery-fileupload-rails"
+#gem "paperclip", "~> 4.2"
+#gem "jquery-fileupload-rails"
 #gem 'awesome_nested_set'
 #gem 'shuber-sortable'
 #gem 'acts_as_list'

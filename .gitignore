@@ -9,6 +9,7 @@
 
 /config/database.yml
 /config/deploy.rb
+/public/system
 
 # Ignore all logfiles and tempfiles.
 /log/*.log

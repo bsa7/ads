@@ -1,0 +1,54 @@
+# $:.unshift(File.expand_path('./lib', ENV['rvm_path']))
+require 'rvm'
+require 'rvm/capistrano'
+require 'bundler/capistrano'
+require 'puma/capistrano'
+
+set :application, "ads"
+set :rails_env, "production"
+set :ssh_ip, "x.x.x.x"
+set :ssh_port, 777
+set :ssh_username, "username"
+set :default_run_options, {:pty => true}
+ssh_options[:port] = ssh_port
+set :domain, "#{ssh_username}@#{ssh_ip}"
+set :deploy_to, "/home/#{ssh_username}/projects/#{application}"
+set :use_sudo, false
+
+set :rvm_type, :user
+
+set :scm, :git
+set :repository,  "ssh://git@#{ssh_ip}:#{ssh_port}/home/git/#{application}.git"
+set :branch, "master"
+set :deploy_via, :remote_cache
+
+role :web, domain
+role :app, domain
+role :db,  domain, :primary => true
+
+before "deploy:restart", "deploy:migrate"
+
+namespace :deploy do
+
+  task :create_db do
+    run "cd #{deploy_to}/current; bundle exec rake db:create RAILS_ENV=#{rails_env}"
+  end
+
+  task :migrate do
+    run "cd #{deploy_to}/current; bundle exec rake db:migrate RAILS_ENV=#{rails_env}"
+  end
+
+  task :symlink_config, roles: :app do
+    run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+    run "ln -nfs #{deploy_to}/shared/config/secrets.yml #{release_path}/config/secrets.yml"
+    run "ln -nfs #{deploy_to}/shared/config/puma.rb #{release_path}/config/puma.rb"
+    run "ln -s #{deploy_to}/shared #{release_path}"
+  end
+
+  task :assets_precompile do
+    run "cd #{current_release} && RAILS_ENV=production bundle exec rake assets:precompile"
+  end
+
+  after "deploy:finalize_update", "deploy:symlink_config", "deploy:assets_precompile", "deploy:restart"
+end
+

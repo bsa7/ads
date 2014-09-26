@@ -50,7 +50,7 @@ end
 #gem 'youtube_it', :git => 'https://github.com/r72cccp/youtube_it.git'
 #gem 'russian', '~> 0.6.0'
 #gem 'will_paginate', '~> 3.0'
-gem 'ckeditor'
+#gem 'ckeditor'
 #gem "nested_form"
 #gem 'nokogiri', '~> 1.6.0'
 #gem 'thinking-sphinx', '~> 3.1.1'

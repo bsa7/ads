@@ -1,0 +1,3 @@
+kill -9 `cat /home/slon/projects/ads/shared/pids/puma.pid`
+rm -f /home/slon/projects/ads/shared/sockets/*.*
+puma -d -b "unix:///home/slon/projects/ads/shared/sockets/puma.sock" --control "unix:///home/slon/projects/ads/shared/sockets/pumactl.sock" --control-token qweqwoeqnweet234rd324d342m5s345lt34t32h4r23o4rc2h34ir32m4ra32o4f

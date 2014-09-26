@@ -1,0 +1,5 @@
+mkdir -p /tmp/shared/pids
+mkdir -p /tmp/shared/sockets
+kill -9 `cat /tmp/shared/pids/ads.pid`
+rm -f /tmp/shared/sockets/ads.sock
+puma --debug

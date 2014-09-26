@@ -1,0 +1,5 @@
+echo ""
+echo -e "\e[0;32m pull from 120-42 server\e[0m"
+git pull u12042 master
+echo -e "\e[0;32m pull from u1-16 server\e[0m"
+git pull u116 master

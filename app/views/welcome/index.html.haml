@@ -1,0 +1,14 @@
+#container
+	#content
+		%h1
+			Welcome - test ads app
+		.ads_list
+			- if ClassifiedAd.count == 0
+				%h2
+					No ads added yet ...
+			- else
+				- ClassifiedAd.order('created_at DESC').limit(Count_of_ads).each do |ad|
+					.ad_item
+						= ad.plain_text
+		#new_ad
+			= I18n.t :add_new_ads

@@ -41,7 +41,8 @@ group :test do
   gem 'launchy'
 end
 #gem 'acts-as-taggable-on'
-#gem "paperclip", "~> 4.1"
+gem "paperclip", "~> 4.2"
+gem "jquery-fileupload-rails"
 #gem 'awesome_nested_set'
 #gem 'shuber-sortable'
 #gem 'acts_as_list'

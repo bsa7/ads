@@ -1,0 +1,208 @@
+@font-face {
+	font-family: 'webglyphs';
+	src: url('/assets/fonts/glyphs.eot');
+	src: url('/assets/fonts/glyphs.eot?#iefix') format('embedded-opentype'),
+	     url('/assets/fonts/glyphs.woff') format('woff'),
+	     url('/assets/fonts/glyphs.ttf') format('truetype'),
+	     url('/assets/fonts/glyphs.svg#webglyphs') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.glyph-btn:before {
+  font-size: 20px !important;
+  line-height: 5px;
+}
+
+.glyph:before {
+  font-family: 'webglyphs' !important; 
+  font-size: 30px;
+  position: relative;
+  top: -3px;
+  pointer-events: none;
+  display: inline-block;
+}
+
+.glyph-search {
+	height: 43px;
+	/*background-color: white;*/
+	padding: 1px 0px 0px 0px;
+	display: block;
+	top: -10px;
+	position: relative;
+}
+
+.glyph-search:before {
+	content: "\F001";
+	margin-right: 2px;
+	margin-left: 10px;
+	top: 13px;
+	left: -17px;
+}
+
+.glyph-top:before {
+  content: "\F002";
+  top: 10px;
+  margin-right: 11px;
+}
+
+.glyph-pointer:before {
+  content: "\F003";
+  font-size: 14px;
+  top: 0px;
+}
+
+.glyph-bread-right:before {
+  content: "\F004";
+  font-size: 9px;
+  margin-right: 3px !important;
+}
+
+.glyph-close:before {
+  content: "\F005";
+  font-size: 14px;
+}
+
+.glyph-close {
+  cursor: pointer;
+}
+
+.glyph-close:hover:before {
+  content: "\F005";
+  font-size: 14px;
+  color: red;
+}
+
+.glyph-next:before {
+  content: "\F006";
+  font-size: 14px;
+}
+
+.glyph-prev:before {
+  content: "\F007";
+  font-size: 15px;
+}
+
+img {
+	border: none;
+}
+
+#container {
+	text-align: center;
+}
+
+#content {
+	display: inline-block;
+	width: 60%;
+	background-color: #fafafa;
+	border: 3px solid #efefef;
+	border-radius: 2px;
+	position: relative;
+}
+
+#new_ad, #confirm, #cancel, #input_file {
+	padding: 20px;
+	color: white;
+	cursor: pointer;
+	border-radius: 3px;
+}
+
+#new_ad {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+}
+
+#new_ad, #confirm {
+	background-color: green;
+}
+
+#new_ad:hover, #confirm:hover {
+	background-color: forestgreen;
+}
+
+#confirm, #cancel, #input_file {
+	position: relative;
+	display: inline-block;
+	bottom: 0px;
+}
+
+#cancel {
+	background-color: crimson;
+}
+
+#cancel:hover {
+	background-color: red;
+}
+
+.new_ads {
+	margin: 10px;
+	position: relative;
+}
+
+.ad_text {
+	width: 600px;
+	height: 300px;
+	border: 2px solid #eaeaea;
+	vertical-align: top;
+	clear: both;
+}
+
+.ad_images {
+	width: 600px;
+	height: 220px;
+	vertical-align: top;
+	clear: both;
+	margin-top: 10px;
+	overflow-y: auto;
+}
+
+input.file {
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+
+#input_file {
+	background-color: navy;
+	padding: 20px;
+	color: white;
+}
+
+#input_file:hover {
+	background-color: midnightblue;
+}
+
+.thumb {
+	display: inline-block;
+	width: auto;
+	height: 100px;
+	border: 0px;
+}
+
+.new_ads_content {
+	display: inline-block;
+}
+
+.ads_controls {
+	display: block;
+	clear: both;
+	width: 600px;
+}
+
+.righttop {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+
+.img_thumb {
+	width: auto;
+	height: 100px;
+	position: relative;
+	display: inline-block;
+	margin-right: 10px;
+}
+

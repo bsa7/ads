@@ -222,3 +222,14 @@ textarea.form-control {
 .upload-preview {
 
 }
+
+.upload-progress {
+	background-color: white;
+	color: green;
+	opacity: 0.5;
+	padding: 1px;
+	height: 10px;
+	width: 100%;
+	position: absolute;
+	top: 90px;
+}

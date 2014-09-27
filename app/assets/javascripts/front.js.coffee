@@ -24,7 +24,7 @@ document_onclick = (e) ->
 				speedOut: 30
 				css:
 					'background-color': 'rgba(111,11,11,0.6)'
-		set_file_listener(new_id)
+		set_file_listener()
 	else if /input_file/.test e.target.id
 		$("input.file").click()
 	else if /delete_img/.test e.target.getAttribute("data-type")
@@ -40,7 +40,7 @@ document_onclick = (e) ->
 			$("textarea##{id}").replaceWith "<p style='width: #{p_width}' data-type='comment_img' class='img_comment'>#{new_text}</p>"
 
 #--------------------------------------------------------------------------------------------------
-set_file_listener = (id) ->
+set_file_listener = () ->
 	$(".file").change (event) ->
 		input = $(event.currentTarget)
 		readers = []
@@ -49,19 +49,21 @@ set_file_listener = (id) ->
 			#readers.slice(-1)[0].readAsDataURL file
 			readers.slice(-1)[0].onload = (e) ->
 				image_base64 = e.target.result
-				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: file.name, id: makeid(7)})
-				console.log "begin"
+				id = makeid(7)
+				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: file.name, id: id})
+				#console.log "begin"
 				#console.log preview
 				$(".upload-preview").append(preview)
-				console.log "end"
+				#console.log "end"
 				#$(".upload-preview").hide().show(0)
 				upload(file, onSuccess, onError, onProgress, "#{id}")
 			readers.slice(-1)[0].readAsDataURL file
 
 #--------------------------------------------------------------------------------------------------
-onSuccess = (e) ->
-	console.log "success"
-	console.log e
+onSuccess = (e, bar_id) ->
+	#console.log "success"
+	#console.log e
+	$("##{bar_id} progress").remove()
 
 #--------------------------------------------------------------------------------------------------
 onLoad = ->
@@ -73,21 +75,23 @@ onError = (e) ->
 	console.log e
 
 #--------------------------------------------------------------------------------------------------
-onProgress = (loaded, total, bar) ->
-	console.log loaded, total, bar
+onProgress = (loaded, total, bar_id) ->
+	#console.log loaded, total, bar_id
+	#console.log $("##{bar_id} progress")
+	$("##{bar_id} progress").attr("value", "#{loaded / total * 100}")
 
 #--------------------------------------------------------------------------------------------------
-upload = (file, onSuccess, onError, onProgress, bar) ->
+upload = (file, onSuccess, onError, onProgress, bar_id) ->
 	xhr = new XMLHttpRequest()
 	xhr.onload = xhr.onerror = ->
 		if @status isnt 200
 			onError this
 			return
-		onSuccess(this)
+		onSuccess(this, bar_id)
 		return
 
 	xhr.upload.onprogress = (event) ->
-		onProgress event.loaded, event.total, bar
+		onProgress event.loaded, event.total, bar_id
 		return
 
 	xhr.open "POST", "/upload_image?file_name=#{file.name}&ads_id=#{$('.new_ads').attr('id')}", true

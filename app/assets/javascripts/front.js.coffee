@@ -46,7 +46,7 @@ document_onclick = (e) ->
 #				console.log img.id
 				progressbar = image.parent().children("progress.upload-progress")
 				ads_images.push
-					id: img.id
+					id: $(".new_ads")[0].id #img.id
 					filename: image.children("img").attr("data-filename")
 					comment: image.children("p[data-type='comment_img']").html()
 					uploaded: parseInt(progressbar.attr("value")) / parseInt(progressbar.attr("max"))
@@ -78,34 +78,35 @@ set_file_listener = ->
 		input = $(event.currentTarget)
 		readers = []
 		for file in input[0].files
-			id = makeid(7)
-			fast_preview = HandlebarsTemplates['img_thumb']({src: "/assets/images/thumb_dumb.gif", img_comment: file.name, id: id})
+			file_id = makeid(7)
+			fast_preview = HandlebarsTemplates['img_thumb']({src: "/assets/images/thumb_dumb.gif", img_comment: file.name, id: file_id})
 			$(".upload-preview").append(fast_preview)
 			$(".upload-preview").hide().show(0)
 			o = new FileReader()
-			o.id = id
+			o.file_id = file_id
+			o.file = file
 			o.readAsDataURL file
 			o.onload = (e) ->
-				id = e.target.id
 				image_base64 = e.target.result
-				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: file.name, id: id})
+#				console.log @file_id, @file.name
+				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: @file.name, id: @file_id})
 				pic_real_width = undefined
 				pic_scaled_width = undefined
 				pic_real_height = undefined
 				pic_scaled_height = 100
-				o1 = $("<img id='#{id}'/>")
-				o1.id = id
-				o1.load( ->
-					id = $(this)[0].id
-					$("##{id}").replaceWith(preview)
+				preloaded_image = $("<img id='#{@file_id}'/>")
+				preloaded_image.file_id = @file_id
+				preloaded_image.load( ->
+					preloaded_image_id = $(this)[0].id
+					$("##{preloaded_image_id}").replaceWith(preview)
 					pic_real_width = @width
 					pic_real_height = @height
 					pic_scaled_width = pic_real_width * (100 / pic_real_height)
-					$("##{id}").css
+					$("##{preloaded_image_id}").css
 						width: pic_scaled_width
 					return
 				).attr("src", image_base64)
-				upload(file, onSuccess, onError, onProgress, "#{id}")
+				upload @file, onSuccess, onError, onProgress, @file_id
 
 #--------------------------------------------------------------------------------------------------
 onSuccess = (e, bar_id) ->

@@ -20,10 +20,13 @@ ActiveRecord::Schema.define(version: 20140926111826) do
   end
 
   create_table "images", force: true do |t|
+    t.integer  "classified_ad_id"
     t.string   "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "filename"
   end
+
+  add_index "images", ["classified_ad_id"], name: "index_images_on_classified_ad_id", using: :btree
 
 end

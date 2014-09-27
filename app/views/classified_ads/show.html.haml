@@ -1,0 +1,9 @@
+.ad_show
+	.ad_text
+		= simple_format @ad.plain_text
+	.ad_images
+		- @ad.images.each do |ad_image|
+			.img_thumb
+				%img{src: "/system/uploads/#{ad_image.filename}"}
+				%p
+					= ad_image.comment

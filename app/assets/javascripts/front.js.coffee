@@ -9,8 +9,9 @@ ad_content = (ad) ->
 #--------------------------------------------------------------------------------------------------
 document_onclick = (e) ->
 	if /new_ad/.test e.target.id
+		new_id = makeid(7)
 		$.fancybox
-			content: HandlebarsTemplates['new_ad']({id: makeid(7)})
+			content: HandlebarsTemplates['new_ad']({id: new_id})
 			padding: 0
 			width: 848
 			height: 686
@@ -23,7 +24,7 @@ document_onclick = (e) ->
 				speedOut: 30
 				css:
 					'background-color': 'rgba(111,11,11,0.6)'
-		set_file_listener()
+		set_file_listener(new_id)
 	else if /input_file/.test e.target.id
 		$("input.file").click()
 	else if /delete_img/.test e.target.getAttribute("data-type")
@@ -39,19 +40,23 @@ document_onclick = (e) ->
 			$("textarea##{id}").replaceWith "<p style='width: #{p_width}' data-type='comment_img' class='img_comment'>#{new_text}</p>"
 
 #--------------------------------------------------------------------------------------------------
-set_file_listener = ->
+set_file_listener = (id) ->
 	$(".file").change (event) ->
 		input = $(event.currentTarget)
 		readers = []
 		for file in input[0].files
 			readers.push new FileReader()
+			#readers.slice(-1)[0].readAsDataURL file
 			readers.slice(-1)[0].onload = (e) ->
 				image_base64 = e.target.result
 				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: file.name, id: makeid(7)})
-				$(".upload-preview").html($(".upload-preview").html()+preview)
-				$(".upload-preview").hide().show(0)
+				console.log "begin"
+				#console.log preview
+				$(".upload-preview").append(preview)
+				console.log "end"
+				#$(".upload-preview").hide().show(0)
+				upload(file, onSuccess, onError, onProgress, "#{id}")
 			readers.slice(-1)[0].readAsDataURL file
-			upload(file, onSuccess, onError, onProgress, "#id")
 
 #--------------------------------------------------------------------------------------------------
 onSuccess = (e) ->
@@ -69,11 +74,27 @@ onError = (e) ->
 
 #--------------------------------------------------------------------------------------------------
 onProgress = (loaded, total, bar) ->
-	console.log loaded + " / " + total + ", #{bar}"
+	console.log loaded, total, bar
 
 #--------------------------------------------------------------------------------------------------
 upload = (file, onSuccess, onError, onProgress, bar) ->
-	console.log file
+	xhr = new XMLHttpRequest()
+	xhr.onload = xhr.onerror = ->
+		if @status isnt 200
+			onError this
+			return
+		onSuccess(this)
+		return
+
+	xhr.upload.onprogress = (event) ->
+		onProgress event.loaded, event.total, bar
+		return
+
+	xhr.open "POST", "/upload_image?file_name=#{file.name}&ads_id=#{$('.new_ads').attr('id')}", true
+	xhr.setRequestHeader('X-CSRF-Token', window.get_token())
+	xhr.send file
+
+###
 	$.ajax
 		async: true
 		type: "post"
@@ -84,15 +105,22 @@ upload = (file, onSuccess, onError, onProgress, bar) ->
 		xhrFields:
 			onprogress: (e) ->
 				onProgress e.loaded, e.total, bar
+				console.log e
 			onerror: (e) ->
 				onError(e)
+				console.log e
 			onsuccess: (e) ->
 				onSuccess(e)
+				console.log e
 		success: (data) ->
-			console.log "success"
+			console.log "success!"
 			console.log data
-		processData: false
-		contentType: false
+		error: (e) ->
+			console.log "error!"
+			console.log e
+		#processData: false
+		#contentType: false
+###
 
 #--------------------------------------------------------------------------------------------------
 document.addEventListener "dragstart", ((e) ->

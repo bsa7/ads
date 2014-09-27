@@ -4,9 +4,6 @@ class ImagesController < ApplicationController
   include ApplicationHelper
 
   def upload
-  	Rails.logger.debug "!!! params ->"
-    Rails.logger.debug params.inspect
-    Rails.logger.debug request.body.path
     up_dir = "/public/system/uploads"
     sourceDir = "#{Rails.root}#{up_dir}/#{params[:ads_id][-2..-1].downcase}"
     FileUtils.mkdir_p sourceDir

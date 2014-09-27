@@ -20,10 +20,12 @@ class ClassifiedAdsController < ApplicationController
 
 	def index
 		@classified_ads = ClassifiedAd.order('created_at DESC').limit(Count_of_ads)
+		render layout: need_layout(params)
 	end
 	
 	def show
 		set_ad
+		render layout: need_layout(params)
 	end
 
 

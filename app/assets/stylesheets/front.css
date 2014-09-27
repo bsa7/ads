@@ -337,11 +337,15 @@ textarea.form-control {
 	display: block;
 	position: relative;
 	clear: both;
-	padding: 20px;
-	width: 100%;
 	background-color: #fefefe;
 	text-align: left;
 	cursor: pointer;
+}
+
+.ad_item a {
+	display: block;
+	padding: 20px;
+	width: 100%;
 }
 
 .ad_item:hover {

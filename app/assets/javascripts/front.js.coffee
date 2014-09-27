@@ -38,18 +38,23 @@ document_onclick = (e) ->
 	else if /confirm/.test e.target.id
 		ad_text = $("textarea.ad_text").val() 
 		if ad_text == ""
-			window.status_body "error", "<h1>Наличие текста объявления обязательно!</h1>"
+			window.status_body "error", HandlebarsTemplates['text_needed_here']()
 		else
 			ads_images = []
 			for img in $(".img_thumb")
 				image = $(img)
-				console.log img.id
+#				console.log img.id
+				progressbar = image.parent().children("progress.upload-progress")
 				ads_images.push
 					id: img.id
 					filename: image.children("img").attr("data-filename")
 					comment: image.children("p[data-type='comment_img']").html()
+					uploaded: parseInt(progressbar.attr("value")) / parseInt(progressbar.attr("max"))
+				console.log $(progressbar)
+				console.log progressbar.attr("value")
+				console.log progressbar.attr("max")
 			window.get_ajax "/add_ads", {ads_text: ad_text, ads_images: ads_images}, true, "POST", render_new_ads
-			window.status_body "success", "<h1>Объявление размещено.</h1>"
+			window.status_body "success", HandlebarsTemplates['ads_posted']()
 			$.fancybox.close()
 	else if /cancel/.test e.target.id
 		$.fancybox.close()

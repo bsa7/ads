@@ -1,11 +1,11 @@
 #container
 	#content
 		%h1
-			Welcome - test ads app
+			= I18n.t :welcome_message
 		.ads_list
 			- if ClassifiedAd.count == 0
 				%h2
-					No ads added yet ...
+					= I18n.t :no_ads_added_yet
 			- else
 				- ClassifiedAd.order('created_at DESC').limit(Count_of_ads).each do |ad|
 					.ad_item

@@ -61,6 +61,8 @@
 .glyph-close:before {
   content: "\F005";
   font-size: 14px;
+  border: 0px solid white;
+  text-shadow: 0px 0px 15px rgba(255, 255, 255, 1);
 }
 
 .glyph-close {
@@ -71,6 +73,7 @@
   content: "\F005";
   font-size: 14px;
   color: red;
+  text-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
 }
 
 .glyph-next:before {
@@ -176,7 +179,8 @@ input.file {
 
 .thumb {
 	clear: both;
-	width: auto;
+	/*width: auto;*/
+	display: inline-block;
 	height: 100px;
 	border: 0px;
 }
@@ -233,3 +237,64 @@ textarea.form-control {
 	position: absolute;
 	top: 90px;
 }
+
+#success_wrapper, #error_wrapper {
+	cursor: pointer;
+	width: 100%;
+	height: 100px;
+	position:fixed;
+	top: -200px;
+	left: 0;
+	z-index:20000;
+	opacity: 1;
+}
+
+#success_wrapper .data-message, #error_wrapper .data-message {
+	pointer-events: none;
+	position: absolute;
+	top: 5px;
+	left: 20px;
+	color: white;
+}
+
+#success_wrapper .data-message h1, #error_wrapper .data-message h1 {
+	font-family:Trebuchet MS,Helvetica,sans-serif;
+	font-size:140%;
+	font-weight: bold;
+	display: block;
+	margin-top: auto;
+	margin-bottom: auto;
+	margin-left: 30px;
+	color: white;
+}
+
+#success_wrapper .data-transparent, #error_wrapper .data-transparent {
+	pointer-events: none;
+	width: 100%;
+	height: 100%;
+	padding:15px;
+}
+
+#success_wrapper .data-transparent {
+	background-color:#00AE00;
+}
+
+#error_wrapper .data-transparent {
+	background-color:#AE0000;
+}
+
+#success_wrapper [id^='close_'], #error_wrapper [id^='close_'] {
+	font-size: 60px;
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+
+#success_wrapper [id^='close_']:hover, #error_wrapper [id^='close_']:hover {
+	-webkit-filter: brightness(0.8);
+	-moz-filter: brightness(0.8);
+	-o-filter:  brightness(0.8);
+	-ms-filter:  brightness(0.8);
+	opacity: inherit;
+}
+

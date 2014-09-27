@@ -33,31 +33,85 @@ document_onclick = (e) ->
 		comment_text = $(e.target).html()
 		id = e.target.parentNode.id
 		p_width = $(e.target).css("width")
-		$(e.target).replaceWith("<textarea style='width: #{p_width}' id='#{id}' type='text' class='form-control'>#{comment_text}</textarea>")
+		textarea = $(e.target).replaceWith("<textarea style='width: #{p_width}' id='#{id}' type='text' class='thumb-caption form-control'>#{comment_text}</textarea>")
 		$("textarea##{id}").focus()
-		$("textarea##{id}").blur ->
-			new_text = $("textarea##{id}").val()
-			$("textarea##{id}").replaceWith "<p style='width: #{p_width}' data-type='comment_img' class='img_comment'>#{new_text}</p>"
+	else if /confirm/.test e.target.id
+		ad_text = $("textarea.ad_text").val() 
+		if ad_text == ""
+			window.status_body "error", "<h1>Наличие текста объявления обязательно!</h1>"
+		else
+			ads_images = []
+			for img in $(".img_thumb")
+				image = $(img)
+				console.log img.id
+				ads_images.push
+					id: img.id
+					filename: image.children("img").attr("data-filename")
+					comment: image.children("p[data-type='comment_img']").html()
+			window.get_ajax "/add_ads", {ads_text: ad_text, ads_images: ads_images}, true, "POST", render_new_ads
+			window.status_body "success", "<h1>Объявление размещено.</h1>"
+			$.fancybox.close()
+	else if /cancel/.test e.target.id
+		$.fancybox.close()
 
 #--------------------------------------------------------------------------------------------------
-set_file_listener = () ->
+$(document).mousedown (e) ->
+	for textarea in $(".thumb-caption")
+		if /thumb-caption/.test("#{textarea.className}") && textarea.id != e.target.id
+			p_width = $(textarea).parent().children("img").css("width")
+			new_text = $(textarea).val()
+			$(textarea).replaceWith "<p style='width: #{p_width}' data-type='comment_img' class='img_comment'>#{new_text}</p>"
+
+#--------------------------------------------------------------------------------------------------
+render_new_ads = (data) ->
+	console.log "New ads created: "
+	console.log data
+
+#--------------------------------------------------------------------------------------------------
+set_file_listener = ->
 	$(".file").change (event) ->
 		input = $(event.currentTarget)
 		readers = []
 		for file in input[0].files
-			readers.push new FileReader()
+			id = makeid(7)
+			fast_preview = HandlebarsTemplates['img_thumb']({src: "/assets/images/thumb_dumb.gif", img_comment: file.name, id: id})
+			$(".upload-preview").append(fast_preview)
+			$(".upload-preview").hide().show(0)
+			o = new FileReader()
+			o.id = id
+			readers.push o
+			#console.log o
+			#readers.push o
+			viewers = []
 			readers.slice(-1)[0].onload = (e) ->
+			#o.onload = (e) ->
+				#console.log e
+				id = e.target.id
 				image_base64 = e.target.result
-				id = makeid(7)
 				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: file.name, id: id})
-				$(".upload-preview").append(preview)
-				preview_id = $(preview).attr('id')
-				preview_image_width = $("##{preview_id} img").css("width")
-				$("##{preview_id}").css
-					width: preview_image_width
-				#$(".upload-preview").hide().show(0)
+				pic_real_width = undefined
+				pic_scaled_width = undefined
+				pic_real_height = undefined
+				pic_scaled_height = 100
+				o1 = $("<img/>")
+				o1.id = id
+				viewers.push o1
+				#console.log o1
+				viewers.slice(-1)[0].attr("src", image_base64).load ->
+#					console.log "!+!+!+"
+#					console.log e.target
+					id = e.target.id
+					#console.log id
+					$("##{id}").replaceWith(preview)
+					pic_real_width = @width
+					pic_real_height = @height
+					pic_scaled_width = pic_real_width * (100 / pic_real_height)
+					$("##{id}").css
+						width: pic_scaled_width
+					return
 				upload(file, onSuccess, onError, onProgress, "#{id}")
 			readers.slice(-1)[0].readAsDataURL file
+			#o.readAsDataURL file
 
 #--------------------------------------------------------------------------------------------------
 onSuccess = (e, bar_id) ->
@@ -113,3 +167,111 @@ makeid = (length_of) ->
 		text += possible.charAt(Math.floor(Math.random() * possible.length))
 		i++
 	text
+
+#-- pause animation in status message block if mouse hover on them ---------------------------------
+$("div[id$='_wrapper']").hover (e)->
+
+  state = '-webkit-animation-play-state'
+  @.css state, (i, v) ->
+    (if v is "paused" then "running" else "paused")
+  @.toggleClass "paused", @.css(state) is "paused"
+
+
+#-- show a status message ---------------------------------------------------------------------------
+window.status_body = (status, html, seconds = null) ->
+	if seconds == 0
+		$("##{status}_wrapper > div.data-message").html html
+		$("##{status}_wrapper > div.data-transparent").css
+			opacity: 0.9
+		$("##{status}_wrapper").css
+			top: "0px"
+	else
+		unless seconds
+			seconds = 4
+		seconds *= 1000
+		if $("##{status}_wrapper > div.data-transparent").is(':animated')
+			$("##{status}_wrapper > div.data-transparent").stop()
+		if $("##{status}_wrapper > div.data-message").is(':animated')
+			$("##{status}_wrapper > div.data-message").stop()
+		if $("##{status}_wrapper").is(':animated')
+			$("##{status}_wrapper").stop()
+		$("##{status}_wrapper").css
+			opacity: 0.9
+			top: "0px"
+		$("##{status}_wrapper > div.data-message").html html
+		left = ($("##{status}_wrapper").width() - $("##{status}_wrapper > .data-message").width())/2
+		top = ($("##{status}_wrapper").height() - $("##{status}_wrapper > .data-message").height())/2
+		$("##{status}_wrapper > .data-message").css
+			top: "#{top}px"
+			left: "#{left}px"
+		$("##{status}_wrapper > div.data-transparent").css
+			opacity: 0.9
+		$("##{status}_wrapper > div.data-message").css
+			opacity: 1
+		$("##{status}_wrapper > div.data-transparent").animate
+			opacity: 0
+			WebkitTransition: "opacity 2s ease-in-elastic"
+			MozTransition: "opacity 2s ease-in-elastic"
+			MsTransition: "opacity 2s ease-in-elastic"
+			OTransition: "opacity 2s ease-in-elastic"
+			transition: "opacity 2s ease-in-elastic"
+		, seconds, ->
+		$("##{status}_wrapper > div.data-message").animate
+			opacity: 0
+		, seconds, ->
+			$("##{status}_wrapper").css #.animate
+				opacity: 0
+				top: "-200px"
+
+#-- close a success, error message by click ---------------------------------------------------------------------------
+$(document).click (e)->
+	id = window.get_attr(e.target, "id", 3)
+	if /_wrapper/.test(id)
+		$("[id$='_wrapper'] > div.data-transparent").css
+			opacity: 0
+		$("[id$='_wrapper']").css
+			top: "-200px"
+
+#--------------------------------------------------------------------------------------------------
+window.get_attr = (element, attr_name, depth = 1) ->
+	res = []
+	r = element
+	for level in [1..depth]
+		if r
+			res.push $(r).attr(attr_name)
+			r = r.parentNode
+	res.first_not_empty()
+
+#--------------------------------------------------------------------------------------------------
+Array::first_not_empty = ->
+	res = null
+	for res in this
+		if res
+			break
+	res
+
+#--------------------------------------------------------------------------------------------------
+window.get_ajax = (url, data_adds, async = false, query_type = "GET", callback = null, callback_params = null, datatype = "json") ->
+	data =
+		utf8: "\?"
+		layout: false
+		authenticity_token: window.get_token()
+	for key, val of data_adds
+		data[key] = val
+	$.ajax
+		async: async
+		type: query_type
+		datatype: datatype
+		data: data
+		url: url
+		error: (data) ->
+			if callback
+				callback(data, callback_params)
+			else
+				data
+		success: (data) ->
+			if callback
+				callback(data, callback_params)
+			else
+				data
+

@@ -79,13 +79,8 @@ set_file_listener = ->
 			$(".upload-preview").hide().show(0)
 			o = new FileReader()
 			o.id = id
-			readers.push o
-			#console.log o
-			#readers.push o
-			viewers = []
-			readers.slice(-1)[0].onload = (e) ->
-			#o.onload = (e) ->
-				#console.log e
+			o.readAsDataURL file
+			o.onload = (e) ->
 				id = e.target.id
 				image_base64 = e.target.result
 				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: file.name, id: id})
@@ -93,15 +88,10 @@ set_file_listener = ->
 				pic_scaled_width = undefined
 				pic_real_height = undefined
 				pic_scaled_height = 100
-				o1 = $("<img/>")
+				o1 = $("<img id='#{id}'/>")
 				o1.id = id
-				viewers.push o1
-				#console.log o1
-				viewers.slice(-1)[0].attr("src", image_base64).load ->
-#					console.log "!+!+!+"
-#					console.log e.target
-					id = e.target.id
-					#console.log id
+				o1.load( ->
+					id = $(this)[0].id
 					$("##{id}").replaceWith(preview)
 					pic_real_width = @width
 					pic_real_height = @height
@@ -109,9 +99,8 @@ set_file_listener = ->
 					$("##{id}").css
 						width: pic_scaled_width
 					return
+				).attr("src", image_base64)
 				upload(file, onSuccess, onError, onProgress, "#{id}")
-			readers.slice(-1)[0].readAsDataURL file
-			#o.readAsDataURL file
 
 #--------------------------------------------------------------------------------------------------
 onSuccess = (e, bar_id) ->

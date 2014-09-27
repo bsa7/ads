@@ -46,23 +46,21 @@ set_file_listener = () ->
 		readers = []
 		for file in input[0].files
 			readers.push new FileReader()
-			#readers.slice(-1)[0].readAsDataURL file
 			readers.slice(-1)[0].onload = (e) ->
 				image_base64 = e.target.result
 				id = makeid(7)
 				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: file.name, id: id})
-				#console.log "begin"
-				#console.log preview
 				$(".upload-preview").append(preview)
-				#console.log "end"
+				preview_id = $(preview).attr('id')
+				preview_image_width = $("##{preview_id} img").css("width")
+				$("##{preview_id}").css
+					width: preview_image_width
 				#$(".upload-preview").hide().show(0)
 				upload(file, onSuccess, onError, onProgress, "#{id}")
 			readers.slice(-1)[0].readAsDataURL file
 
 #--------------------------------------------------------------------------------------------------
 onSuccess = (e, bar_id) ->
-	#console.log "success"
-	#console.log e
 	$("##{bar_id} progress").remove()
 
 #--------------------------------------------------------------------------------------------------
@@ -76,8 +74,6 @@ onError = (e) ->
 
 #--------------------------------------------------------------------------------------------------
 onProgress = (loaded, total, bar_id) ->
-	#console.log loaded, total, bar_id
-	#console.log $("##{bar_id} progress")
 	$("##{bar_id} progress").attr("value", "#{loaded / total * 100}")
 
 #--------------------------------------------------------------------------------------------------
@@ -97,34 +93,6 @@ upload = (file, onSuccess, onError, onProgress, bar_id) ->
 	xhr.open "POST", "/upload_image?file_name=#{file.name}&ads_id=#{$('.new_ads').attr('id')}", true
 	xhr.setRequestHeader('X-CSRF-Token', window.get_token())
 	xhr.send file
-
-###
-	$.ajax
-		async: true
-		type: "post"
-		datatype: "json"
-		data: file
-		url: "/upload_image?file_name=#{file.name}&ads_id=#{$('.new_ads').attr('id')}"
-		multipart: true
-		xhrFields:
-			onprogress: (e) ->
-				onProgress e.loaded, e.total, bar
-				console.log e
-			onerror: (e) ->
-				onError(e)
-				console.log e
-			onsuccess: (e) ->
-				onSuccess(e)
-				console.log e
-		success: (data) ->
-			console.log "success!"
-			console.log data
-		error: (e) ->
-			console.log "error!"
-			console.log e
-		#processData: false
-		#contentType: false
-###
 
 #--------------------------------------------------------------------------------------------------
 document.addEventListener "dragstart", ((e) ->

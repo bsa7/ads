@@ -8,8 +8,6 @@ class ImagesController < ApplicationController
 		sourceDir = "#{Rails.root}#{up_dir}/#{params[:ads_id][-2..-1].downcase}"
 		FileUtils.mkdir_p sourceDir
 		destFileName = "#{sourceDir}/#{params[:file_name]}"
-		Rails.logger.debug "================"
-		Rails.logger.debug request.body.inspect
 		
 		if request.body.class == StringIO
 			file = Tempfile.new(['temp',''])

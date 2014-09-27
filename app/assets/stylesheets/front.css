@@ -125,6 +125,10 @@ img {
 	overflow-y: auto;
 }
 
+#content h1 {
+	padding: 20px 10px;
+}
+
 #new_ad, #confirm, #cancel, #input_file {
 	padding: 20px;
 	color: white;
@@ -331,6 +335,7 @@ textarea.form-control {
 
 .ad_item {
 	display: block;
+	position: relative;
 	clear: both;
 	padding: 20px;
 	width: 100%;
@@ -341,6 +346,14 @@ textarea.form-control {
 
 .ad_item:hover {
 	background-color: #eeeeee;
+}
+
+.ad_item .ad_created_at {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	padding: 3px 20px;
+	font-size: 9px;
 }
 
 .ads_list a {
@@ -360,6 +373,7 @@ textarea.form-control {
 	width: 100%;
 	padding: 20px;
 	background-color: #fafafa;
+	position: relative;
 }
 
 .ad_show .ad_text {
@@ -379,3 +393,12 @@ textarea.form-control {
 	padding: 20px;
 	border-bottom: 3px solid #eaeaea;
 }
+
+.ad_show .title {
+	position: absolute;
+	padding: 5px;
+	right: 0px;
+	top: 0px;
+	background-color: #efefef;
+}
+

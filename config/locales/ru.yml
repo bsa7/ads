@@ -3,6 +3,7 @@ ru:
   ads: Объявления
   ads_posted: Объявление размещено
   cancel: Отмена
+  created_at: Дата размещения
   enter_ads_text_here: Введите текст объявления
   images_not_loaded_yet: Незагруженные изображения
   no_ads_added_yet: Объявления пока отсутствуют

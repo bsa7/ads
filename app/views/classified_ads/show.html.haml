@@ -1,4 +1,7 @@
 .ad_show
+	.title
+		= I18n.t :created_at
+		= @ad.created_at
 	.ad_text
 		= simple_format @ad.plain_text
 	.ad_images

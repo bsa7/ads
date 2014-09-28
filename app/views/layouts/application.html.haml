@@ -8,6 +8,12 @@
 	= csrf_meta_tags
 %body
 	= render "shared/header"
+	#new_ad
+		= I18n.t :add_new_ads
+	#to_home
+		%a{href: "/"}
+			= I18n.t :to_home
+	#ads_index_mini
 	#wrapper
 		#container
 			#content

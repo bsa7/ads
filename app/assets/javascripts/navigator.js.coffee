@@ -42,7 +42,7 @@ draw_ajax_page = (response, params) ->
 	navCache params["page"],
 		html: data["html"]
 		timestamp: data["timestamp"]
-	console.log "57#push state"
+#	console.log "57#push state"
 	history.pushState
 		page: params["page"]
 		type: "page"
@@ -60,18 +60,19 @@ setPage = (page, params, target, success_callback = null, callback_params = null
 		$(target).html(navCache(page).html)
 		if success_callback
 			success_callback(callback_params)
-		console.log "75#push state"
+#		console.log "75#push state"
 		history.pushState
 			page: page
 			type: "page"
 		, document.title, page
 	else
 		window.get_ajax "#{page}", {layout: false, timestamp: true}, ASYNC, "GET", draw_ajax_page, {layout: false, page: page, target: target}, "json"
+	customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 doc_ready = ->
-	console.log "85#push state"
-	console.log $("#content").html()
+#	console.log "85#push state"
+#	console.log $(".ads_list").length
 	history.pushState
 		page: window.location.pathname
 		type: "page"
@@ -79,6 +80,7 @@ doc_ready = ->
 	navCache window.location.pathname,
 		html: $("#content").html()
 		timestamp: $($("#wrapper")).attr("timestamp") || current_timestamp()
+	customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 $(document).ready ->
@@ -86,21 +88,44 @@ $(document).ready ->
 
 #-------------------------------------------------------------------------------------------------
 window.onpopstate = (e) ->
-	console.log "window.onpopstate"
-	console.log e
-	console.log history
+#	console.log "window.onpopstate"
+#	console.log e
+#	console.log history
 	return if !e.state || !e.state.page || !navCache(e.state.page) || !history.pushState
-	console.log !e.state, !e.state.page, !navCache(e.state.page), !history.pushState
-	console.log {navCache: navCache}
+#	console.log !e.state, !e.state.page, !navCache(e.state.page), !history.pushState
+#	console.log {navCache: navCache}
 	$("#content").html navCache(e.state.page)["html"] if navCache(e.state.page)["html"].length > 2 if e.state.type.length > 0
+	customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 $(document).click (e)->
 	document_onclick e
+	customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 document_onclick = (e) ->
 	if /^[aA]$/.test(e.target.tagName)# && /^\//.test(e.target.attr("href"))
 		e.preventDefault()
 		setPage $(e.target).attr("href"), {}, "#content"
+
+#--------------------------------------------------------------------------------------------------
+customize_layout = ->
+#	console.log "customize_layout"
+	to_index_items = ["#ads_index_mini", "#to_home"]
+	if $(".ads_list").length == 0
+#		console.log "нарисуем сбоку индекс"
+		window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", draw_index_mini, {layout: false}, "json"
+		for item_to_show in to_index_items 
+			$(item_to_show).css
+				display: "block"
+	else
+		for item_to_show in to_index_items 
+			$(item_to_show).css
+				display: "none"
+		$("#ads_index_mini").html("")
+
+#--------------------------------------------------------------------------------------------------
+draw_index_mini = (response, params) ->
+	$("#ads_index_mini").html(response)
+	$("#ads_index_mini h1").remove()
 

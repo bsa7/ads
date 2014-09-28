@@ -129,7 +129,7 @@ img {
 	padding: 20px 10px;
 }
 
-#new_ad, #confirm, #cancel, #input_file {
+#new_ad, #confirm, #cancel, #input_file, #to_home {
 	padding: 20px;
 	color: white;
 	cursor: pointer;
@@ -142,11 +142,31 @@ img {
 	left: 10px;
 }
 
-#new_ad, #confirm {
+#to_home {
+	padding: 0;
+	position: fixed;
+	top: 10px;
+	left: 210px;
+	display: none;
+}
+
+#to_home a {
+	padding: 20px;
+	display: block;
+	text-decoration: none;
+	color: white;
+}
+
+#to_home a:visited {
+	color: #eee;
+}
+
+
+#new_ad, #confirm, #to_home {
 	background-color: green;
 }
 
-#new_ad:hover, #confirm:hover {
+#new_ad:hover, #confirm:hover, #to_home:hover {
 	background-color: forestgreen;
 }
 
@@ -404,5 +424,16 @@ textarea.form-control {
 	right: 0px;
 	top: 0px;
 	background-color: #efefef;
+}
+
+#ads_index_mini {
+	background-color: #fefefe;
+	position: fixed;
+	left: 10px;
+	top: 80px;
+	display: none;
+	width: 19%;
+	height: 60%;
+	border-radius: 3px;
 }
 

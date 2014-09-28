@@ -291,3 +291,16 @@ window.get_ajax = (url, data_adds, async = false, query_type = "GET", callback =
 			else
 				data
 
+#--------------------------------------------------------------------------------------------------
+get_right = (elem) ->
+	$(elem).position().left+$(elem).width()
+
+#--------------------------------------------------------------------------------------------------
+window.onresize = ->
+	if get_right("#to_home") > $("#content").position().left
+		$("#content").css
+			"margin-top": "70px"
+	else
+		$("#content").css
+			"margin-top": "0px"
+

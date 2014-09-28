@@ -87,12 +87,18 @@ window.onpopstate = (e) ->
 
 #--------------------------------------------------------------------------------------------------
 $(document).click (e)->
+#	console.log "$(document).click (e)->"
 	document_onclick e
 
 #--------------------------------------------------------------------------------------------------
 document_onclick = (e) ->
-	if /^[aA]$/.test(e.target.tagName) && /^\//.test(e.target.attr("href"))
+#	console.log e
+#	console.log /^[aA]$/.test(e.target.tagName), /^\//.test(e.target.attr("href"))
+#	console.log /^[aA]$/.test(e.target.tagName)
+#	console.log /^\//.test(e.target.getAttribute("href"))
+	if /^[aA]$/.test(e.target.tagName) && /^\//.test(e.target.getAttribute("href"))
 		e.preventDefault()
+#		console.log $(e.target).attr("href")
 		setPage $(e.target).attr("href"), {}, "#content"
 		customize_layout()
 

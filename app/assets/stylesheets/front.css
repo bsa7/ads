@@ -380,6 +380,11 @@ textarea.form-control {
 	font-size: 9px;
 }
 
+.ads_list {
+	overflow-y: auto;
+	height: 100%;
+}
+
 .ads_list a {
 	text-decoration: none;
 	color: black;
@@ -433,7 +438,7 @@ textarea.form-control {
 	top: 80px;
 	display: none;
 	width: 19%;
-	height: 60%;
+	height: 80%;
 	border-radius: 3px;
 }
 

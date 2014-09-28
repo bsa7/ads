@@ -5,25 +5,37 @@ $(document).click (e)->
 #--------------------------------------------------------------------------------------------------
 ad_content = (ad) ->
 	HandlebarsTemplates['ad_item']({ad: ad})
-	
+
+#--------------------------------------------------------------------------------------------------
+init_new_ads = ->
+	HandlebarsTemplates['new_ad']({id: makeid(7)})
+
 #--------------------------------------------------------------------------------------------------
 document_onclick = (e) ->
 	if /new_ad/.test e.target.id
-		new_id = makeid(7)
+		content = window.localStorage.getItem("new_ads_editor")
+#		console.log "before load template: #{content}"
+		if !content || content.length == 0
+			content = init_new_ads()
 		$.fancybox
-			content: HandlebarsTemplates['new_ad']({id: new_id})
+			content: content
 			padding: 0
 			width: 848
 			height: 686
 			scrolling: 'no'
 			tpl:
 				closeBtn: "<span class=\"close_map\"></span>"
-		helpers:
-			overlay:
-				locked: true
-				speedOut: 30
-				css:
-					'background-color': 'rgba(111,11,11,0.6)'
+			helpers:
+				overlay:
+					locked: true
+					speedOut: 30
+					css:
+						'background-color': 'rgba(111,111,111,0.6)'
+			beforeClose: ->
+				console.log "fancybox will be closed"
+				$(".ad_text").html($(".ad_text").val())
+				console.log "window.localStorage.remainingSpace", window.localStorage
+				window.localStorage.setItem("new_ads_editor", $(".fancybox-inner").html())
 		set_file_listener()
 	else if /input_file/.test e.target.id
 		$("input.file").click()
@@ -54,8 +66,9 @@ document_onclick = (e) ->
 				console.log progressbar.attr("value")
 				console.log progressbar.attr("max")
 			window.get_ajax "/add_ads", {ads_text: ad_text, ads_images: ads_images}, true, "POST", render_new_ads
-			window.status_body "success", HandlebarsTemplates['ads_posted']()
 			$.fancybox.close()
+			window.status_body "success", HandlebarsTemplates['ads_posted']()
+			window.localStorage.removeItem("new_ads_editor")
 	else if /cancel/.test e.target.id
 		$.fancybox.close()
 
@@ -110,7 +123,15 @@ set_file_listener = ->
 
 #--------------------------------------------------------------------------------------------------
 onSuccess = (e, bar_id) ->
-	$("##{bar_id} progress").remove()
+	console.log bar_id
+	$("##{bar_id} progress").css
+		opacity: 1;
+	ads_id = $('.new_ads').attr('id')
+	ads_images_folder = ads_id.substring(bar_id.length-2,bar_id.length).toLowerCase()
+	img_filename = $("##{bar_id} img").attr('data-filename')
+	console.log ads_id, ads_images_folder, img_filename, "##{bar_id} img" , $("#{bar_id} img")
+	$("##{bar_id} img").attr
+		src: "/system/uploads/#{ads_images_folder}/#{img_filename}"
 
 #--------------------------------------------------------------------------------------------------
 onLoad = ->

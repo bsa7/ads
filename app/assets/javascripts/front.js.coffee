@@ -33,7 +33,9 @@ document_onclick = (e) ->
 						'background-color': 'rgba(111,111,111,0.6)'
 			beforeClose: ->
 #				console.log "fancybox will be closed"
-				$(".ad_text").html($(".ad_text").val())
+#				console.log "before close fancybox "
+#				console.log $("textarea.ad_text").val()
+				$("textarea.ad_text").html($("textarea.ad_text").val())
 #				console.log "window.localStorage.remainingSpace", window.localStorage
 				window.localStorage.setItem("new_ads_editor", $(".fancybox-inner").html())
 		set_file_listener()
@@ -125,7 +127,7 @@ set_file_listener = ->
 onSuccess = (e, bar_id) ->
 #	console.log bar_id
 	$("##{bar_id} progress").css
-		opacity: 1;
+		opacity: 0;
 	ads_id = $('.new_ads').attr('id')
 	ads_images_folder = ads_id.substring(bar_id.length-2,bar_id.length).toLowerCase()
 	img_filename = $("##{bar_id} img").attr('data-filename')

@@ -38,6 +38,7 @@ draw_ajax_page = (response, params) ->
 		html: response
 	$(params["target"]).html(data["html"])
 	$(params["target"]).attr("data-timestamp", data["timestamp"])
+	customize_layout()
 	#запись в кэш
 	navCache params["page"],
 		html: data["html"]
@@ -62,7 +63,6 @@ setPage = (page, params, target, success_callback = null, callback_params = null
 		, document.title, page
 	else
 		window.get_ajax "#{page}", {layout: false, timestamp: true}, ASYNC, "GET", draw_ajax_page, {layout: false, page: page, target: target}, "json"
-	customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 doc_ready = ->
@@ -100,20 +100,20 @@ document_onclick = (e) ->
 		e.preventDefault()
 #		console.log $(e.target).attr("href")
 		setPage $(e.target).attr("href"), {}, "#content"
-		customize_layout()
+	customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 customize_layout = ->
-#	console.log "customize_layout"
+#	console.log "customize_layout", $(".ads_list").length#, $($(".ads_list")[0]).css("display")
 	to_index_items = ["#ads_index_mini", "#to_home"]
-	if $(".ads_list").length == 0
+	if $(".ads_list").length <1 
 #		console.log "нарисуем сбоку индекс"
 		window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", draw_index_mini, {layout: false}, "json"
 		for item_to_show in to_index_items 
 			$(item_to_show).css
 				display: "block"
-	else
-		for item_to_show in to_index_items 
+	else if $(".ads_list").length > 1
+		for item_to_show in to_index_items
 			$(item_to_show).css
 				display: "none"
 		$("#ads_index_mini").html("")

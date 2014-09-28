@@ -32,9 +32,9 @@ document_onclick = (e) ->
 					css:
 						'background-color': 'rgba(111,111,111,0.6)'
 			beforeClose: ->
-				console.log "fancybox will be closed"
+#				console.log "fancybox will be closed"
 				$(".ad_text").html($(".ad_text").val())
-				console.log "window.localStorage.remainingSpace", window.localStorage
+#				console.log "window.localStorage.remainingSpace", window.localStorage
 				window.localStorage.setItem("new_ads_editor", $(".fancybox-inner").html())
 		set_file_listener()
 	else if /input_file/.test e.target.id
@@ -62,9 +62,9 @@ document_onclick = (e) ->
 					filename: image.children("img").attr("data-filename")
 					comment: image.children("p[data-type='comment_img']").html()
 					uploaded: parseInt(progressbar.attr("value")) / parseInt(progressbar.attr("max"))
-				console.log $(progressbar)
-				console.log progressbar.attr("value")
-				console.log progressbar.attr("max")
+#				console.log $(progressbar)
+#				console.log progressbar.attr("value")
+#				console.log progressbar.attr("max")
 			window.get_ajax "/add_ads", {ads_text: ad_text, ads_images: ads_images}, true, "POST", render_new_ads
 			$.fancybox.close()
 			window.status_body "success", HandlebarsTemplates['ads_posted']()
@@ -123,13 +123,13 @@ set_file_listener = ->
 
 #--------------------------------------------------------------------------------------------------
 onSuccess = (e, bar_id) ->
-	console.log bar_id
+#	console.log bar_id
 	$("##{bar_id} progress").css
 		opacity: 1;
 	ads_id = $('.new_ads').attr('id')
 	ads_images_folder = ads_id.substring(bar_id.length-2,bar_id.length).toLowerCase()
 	img_filename = $("##{bar_id} img").attr('data-filename')
-	console.log ads_id, ads_images_folder, img_filename, "##{bar_id} img" , $("#{bar_id} img")
+#	console.log ads_id, ads_images_folder, img_filename, "##{bar_id} img" , $("#{bar_id} img")
 	$("##{bar_id} img").attr
 		src: "/system/uploads/#{ads_images_folder}/#{img_filename}"
 

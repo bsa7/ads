@@ -6,7 +6,7 @@
 		= simple_format @ad.plain_text
 	.ad_images
 		- @ad.images.each do |ad_image|
-			.img_thumb
+			.img_review
 				%img{src: "/system/uploads/#{ad_image.filename}"}
 				%p
 					= ad_image.comment

@@ -417,8 +417,9 @@ textarea.form-control {
 	height: 40%;
 }
 
-.ad_show .ad_images img{
+.ad_show .ad_images .img_review img{
 	width: 100%;
+	height: auto;
 	padding: 20px;
 	border-bottom: 3px solid #eaeaea;
 }

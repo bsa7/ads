@@ -380,9 +380,8 @@ textarea.form-control {
 	font-size: 9px;
 }
 
-.ads_list {
+#ads_index_mini {
 	overflow-y: auto;
-	height: 100%;
 }
 
 .ads_list a {

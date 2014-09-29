@@ -1,6 +1,132 @@
 #--------------------------------------------------------------------------------------------------
 $(document).click (e)->
-  document_onclick e
+	document_onclick e
+
+#--------------------------------------------------------------------------------------------------
+$(document).ready ->
+	window.doc_ready()
+
+#--------------------------------------------------------------------------------------------------
+$(window).resize ->
+	window.doc_ready()
+
+#--------------------------------------------------------------------------------------------------
+window.onresize = ->
+	if get_right("#to_home") > $("#content").position().left
+		$("#content").css
+			"margin-top": "70px"
+	else
+		$("#content").css
+			"margin-top": "0px"
+
+#--------------------------------------------------------------------------------------------------
+window.doc_ready = ->
+	window_size = window.getWindowSize()
+	$("#content").css
+		height: "#{window_size.height-parseInt($('#content').css('margin-top'))-30}px"
+	$("#ads_index_mini").css
+		height: "#{window_size.height-100}px"
+		
+	$("#ads_index_mini").scroll ->
+#		console.log $(this).scrollTop(), $(this).height(), this.scrollHeight
+#		console.log scrolled_to_bottom_percent(this)
+		limit_1 = .5 # На какую часть нужно промотеть эл-т до низа, чтобы сработал ajax
+		limit_2 = 5  # Сколько скролл хочет загрузить свежих статей
+#		console.log "Has not maintainde requests?", window.localStorage.getItem("not_maintained_request")
+		if scrolled_to_bottom_percent(this) > limit_1 && !window.localStorage.getItem("not_maintained_request")
+#			console.log "It's time to load oldiest ads..."
+			not_answered_request_timestamp = window.localStorage.getItem("not_maintained_request")
+			if isNaN(not_answered_request_timestamp)
+				window.localStorage.removeItem("not_maintained_request")
+				not_answered_request_timestamp = null
+			last_ads_timestamp = Date.parse( $(".ads_list > .ad_item:last-of-type .ad_created_at p").attr("data-datetime") )
+#			console.log 42, not_answered_request_timestamp, last_ads_timestamp, parseInt(not_answered_request_timestamp), parseInt(last_ads_timestamp)
+			so_oldiest_we_never_wanted = !not_answered_request_timestamp || not_answered_request_timestamp && last_ads_timestamp && parseInt(not_answered_request_timestamp) <= parseInt(last_ads_timestamp)
+#			console.log 44, so_oldiest_we_never_wanted
+			if so_oldiest_we_never_wanted
+				timezone_name = Intl.DateTimeFormat().resolvedOptions().timeZone
+				window.get_ajax "/", {layout: false, timezone: timezone_name, timestamp: true, older_than: last_ads_timestamp, count: limit_2}, true, "GET", update_index_mini, {layout: false}, "json"
+				window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
+	for p in $("[data-datetime]")
+		console.log p.getAttribute("data-datetime")
+		d = new Date(p.getAttribute("data-datetime")).toLocaleString('ru-RU', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })
+		$(p).html(d)
+
+#--------------------------------------------------------------------------------------------------
+update_index_mini = (data) ->
+	window.draw_index_mini data
+	window.localStorage.removeItem("not_maintained_request")
+
+#--------------------------------------------------------------------------------------------------
+window.draw_index_mini = (response, params) ->
+#	console.log $($("#ads_index_mini .ads_list")).length
+	if $($("#ads_index_mini .ads_list")).length > 0
+		console.log response
+#		console.log $(response).children()#(".ads_list")#.html()
+#		console.log "before"
+#		console.log $(".ads_list").html()
+		$(".ads_list").append($(response).children())#.hide().show(1)
+#		console.log "after"
+#		console.log $(".ads_list").html()
+		
+	else
+		$("#ads_index_mini").html(response)
+		$("#ads_index_mini h1").remove()
+
+
+#--------------------------------------------------------------------------------------------------
+window.get_token = ->
+	$('meta[name="csrf-token"]').attr('content')
+
+#-- show a status message ---------------------------------------------------------------------------
+window.status_body = (status, html, seconds = null) ->
+	if seconds == 0
+		$("##{status}_wrapper > div.data-message").html html
+		$("##{status}_wrapper > div.data-transparent").css
+			opacity: 0.9
+		$("##{status}_wrapper").css
+			top: "0px"
+	else
+		unless seconds
+			seconds = 4
+		seconds *= 1000
+		if $("##{status}_wrapper > div.data-transparent").is(':animated')
+			$("##{status}_wrapper > div.data-transparent").stop()
+		if $("##{status}_wrapper > div.data-message").is(':animated')
+			$("##{status}_wrapper > div.data-message").stop()
+		if $("##{status}_wrapper").is(':animated')
+			$("##{status}_wrapper").stop()
+		$("##{status}_wrapper").css
+			opacity: 0.9
+			top: "0px"
+		$("##{status}_wrapper > div.data-message").html html
+		left = ($("##{status}_wrapper").width() - $("##{status}_wrapper > .data-message").width())/2
+		top = ($("##{status}_wrapper").height() - $("##{status}_wrapper > .data-message").height())/2
+		$("##{status}_wrapper > .data-message").css
+			top: "#{top}px"
+			left: "#{left}px"
+		$("##{status}_wrapper > div.data-transparent").css
+			opacity: 0.9
+		$("##{status}_wrapper > div.data-message").css
+			opacity: 1
+		$("##{status}_wrapper > div.data-transparent").animate
+			opacity: 0
+			WebkitTransition: "opacity 2s ease-in-elastic"
+			MozTransition: "opacity 2s ease-in-elastic"
+			MsTransition: "opacity 2s ease-in-elastic"
+			OTransition: "opacity 2s ease-in-elastic"
+			transition: "opacity 2s ease-in-elastic"
+		, seconds, ->
+		$("##{status}_wrapper > div.data-message").animate
+			opacity: 0
+		, seconds, ->
+			$("##{status}_wrapper").css #.animate
+				opacity: 0
+				top: "-200px"
+
+#--------------------------------------------------------------------------------------------------
+scrolled_to_bottom_percent = (o) ->
+	$(o).scrollTop() / (o.scrollHeight - $(o).height())
 
 #--------------------------------------------------------------------------------------------------
 ad_content = (ad) ->
@@ -173,10 +299,6 @@ document.addEventListener "dragstart", ((e) ->
 ), false
 
 #--------------------------------------------------------------------------------------------------
-window.get_token = ->
-	$('meta[name="csrf-token"]').attr('content')
-
-#--------------------------------------------------------------------------------------------------
 makeid = (length_of) ->
 	text = ""
 	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -195,52 +317,6 @@ $("div[id$='_wrapper']").hover (e)->
   @.toggleClass "paused", @.css(state) is "paused"
 
 
-#-- show a status message ---------------------------------------------------------------------------
-window.status_body = (status, html, seconds = null) ->
-	if seconds == 0
-		$("##{status}_wrapper > div.data-message").html html
-		$("##{status}_wrapper > div.data-transparent").css
-			opacity: 0.9
-		$("##{status}_wrapper").css
-			top: "0px"
-	else
-		unless seconds
-			seconds = 4
-		seconds *= 1000
-		if $("##{status}_wrapper > div.data-transparent").is(':animated')
-			$("##{status}_wrapper > div.data-transparent").stop()
-		if $("##{status}_wrapper > div.data-message").is(':animated')
-			$("##{status}_wrapper > div.data-message").stop()
-		if $("##{status}_wrapper").is(':animated')
-			$("##{status}_wrapper").stop()
-		$("##{status}_wrapper").css
-			opacity: 0.9
-			top: "0px"
-		$("##{status}_wrapper > div.data-message").html html
-		left = ($("##{status}_wrapper").width() - $("##{status}_wrapper > .data-message").width())/2
-		top = ($("##{status}_wrapper").height() - $("##{status}_wrapper > .data-message").height())/2
-		$("##{status}_wrapper > .data-message").css
-			top: "#{top}px"
-			left: "#{left}px"
-		$("##{status}_wrapper > div.data-transparent").css
-			opacity: 0.9
-		$("##{status}_wrapper > div.data-message").css
-			opacity: 1
-		$("##{status}_wrapper > div.data-transparent").animate
-			opacity: 0
-			WebkitTransition: "opacity 2s ease-in-elastic"
-			MozTransition: "opacity 2s ease-in-elastic"
-			MsTransition: "opacity 2s ease-in-elastic"
-			OTransition: "opacity 2s ease-in-elastic"
-			transition: "opacity 2s ease-in-elastic"
-		, seconds, ->
-		$("##{status}_wrapper > div.data-message").animate
-			opacity: 0
-		, seconds, ->
-			$("##{status}_wrapper").css #.animate
-				opacity: 0
-				top: "-200px"
-
 #-- close a success, error message by click ---------------------------------------------------------------------------
 $(document).click (e)->
 	id = window.get_attr(e.target, "id", 3)
@@ -251,58 +327,6 @@ $(document).click (e)->
 			top: "-200px"
 
 #--------------------------------------------------------------------------------------------------
-window.get_attr = (element, attr_name, depth = 1) ->
-	res = []
-	r = element
-	for level in [1..depth]
-		if r
-			res.push $(r).attr(attr_name)
-			r = r.parentNode
-	res.first_not_empty()
-
-#--------------------------------------------------------------------------------------------------
-Array::first_not_empty = ->
-	res = null
-	for res in this
-		if res
-			break
-	res
-
-#--------------------------------------------------------------------------------------------------
-window.get_ajax = (url, data_adds, async = false, query_type = "GET", callback = null, callback_params = null, datatype = "json") ->
-	data =
-		utf8: "\?"
-		layout: false
-		authenticity_token: window.get_token()
-	for key, val of data_adds
-		data[key] = val
-	$.ajax
-		async: async
-		type: query_type
-		datatype: datatype
-		data: data
-		url: url
-		error: (data) ->
-			if callback
-				callback(data, callback_params)
-			else
-				data
-		success: (data) ->
-			if callback
-				callback(data, callback_params)
-			else
-				data
-
-#--------------------------------------------------------------------------------------------------
 get_right = (elem) ->
 	$(elem).position().left+$(elem).width()
-
-#--------------------------------------------------------------------------------------------------
-window.onresize = ->
-	if get_right("#to_home") > $("#content").position().left
-		$("#content").css
-			"margin-top": "70px"
-	else
-		$("#content").css
-			"margin-top": "0px"
 

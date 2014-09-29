@@ -29,7 +29,7 @@ navCache = (key, value) ->
 
 #--------------------------------------------------------------------------------------------------
 current_timestamp = ->
-	new Date().getTime()
+	window.current_timestamp()
 
 #--------------------------------------------------------------------------------------------------
 draw_ajax_page = (response, params) ->
@@ -108,7 +108,7 @@ customize_layout = ->
 	to_index_items = ["#ads_index_mini", "#to_home"]
 	if $(".ads_list").length <1 
 #		console.log "нарисуем сбоку индекс"
-		window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", draw_index_mini, {layout: false}, "json"
+		window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", window.draw_index_mini, {layout: false}, "json"
 		for item_to_show in to_index_items 
 			$(item_to_show).css
 				display: "block"
@@ -117,9 +117,5 @@ customize_layout = ->
 			$(item_to_show).css
 				display: "none"
 		$("#ads_index_mini").html("")
-
-#--------------------------------------------------------------------------------------------------
-draw_index_mini = (response, params) ->
-	$("#ads_index_mini").html(response)
-	$("#ads_index_mini h1").remove()
+	window.doc_ready()
 

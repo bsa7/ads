@@ -47,6 +47,10 @@ window.doc_ready = ->
 				timezone_name = Intl.DateTimeFormat().resolvedOptions().timeZone
 				window.get_ajax "/", {layout: false, timezone: timezone_name, timestamp: true, older_than: last_ads_timestamp, count: limit_2}, true, "GET", update_index_mini, {layout: false}, "json"
 				window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
+	convert_data_datetime()
+
+#--------------------------------------------------------------------------------------------------
+convert_data_datetime = ->
 	for p in $("[data-datetime]")
 		console.log p.getAttribute("data-datetime")
 		d = new Date(p.getAttribute("data-datetime")).toLocaleString('ru-RU', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })
@@ -59,19 +63,12 @@ update_index_mini = (data) ->
 
 #--------------------------------------------------------------------------------------------------
 window.draw_index_mini = (response, params) ->
-#	console.log $($("#ads_index_mini .ads_list")).length
 	if $($("#ads_index_mini .ads_list")).length > 0
-		console.log response
-#		console.log $(response).children()#(".ads_list")#.html()
-#		console.log "before"
-#		console.log $(".ads_list").html()
 		$(".ads_list").append($(response).children())#.hide().show(1)
-#		console.log "after"
-#		console.log $(".ads_list").html()
-		
 	else
 		$("#ads_index_mini").html(response)
 		$("#ads_index_mini h1").remove()
+	convert_data_datetime()
 
 
 #--------------------------------------------------------------------------------------------------

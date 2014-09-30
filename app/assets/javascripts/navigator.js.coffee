@@ -55,7 +55,6 @@ draw_ajax_page = (response, params) ->
 setPage = (page, params, target, success_callback = null, callback_params = null) ->
 	window.store_index()
 	if navCache(page) && ( navCache(page)["html"] != "" && navCache(page)["html"] != null )
-#		console.log navCache(page)
 		$(target).html(navCache(page).html)
 		if success_callback
 			success_callback(callback_params)
@@ -64,7 +63,6 @@ setPage = (page, params, target, success_callback = null, callback_params = null
 			type: "page"
 		, document.title, page
 	else
-#		console.log "Cache no"
 		window.get_ajax "#{page}", {layout: false, timestamp: true}, ASYNC, "GET", draw_ajax_page, {layout: false, page: page, target: target}, "json"
 
 #--------------------------------------------------------------------------------------------------
@@ -98,7 +96,6 @@ document_onclick = (e) ->
 		e.preventDefault()
 		setPage $(e.target).attr("href"), {}, "#content"
 	customize_layout()
-#	window.restore_index()
 	
 #--------------------------------------------------------------------------------------------------
 customize_layout = ->

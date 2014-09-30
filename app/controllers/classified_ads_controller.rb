@@ -47,11 +47,13 @@ class ClassifiedAdsController < ApplicationController
 			@ads = ClassifiedAd.create(
 				plain_text: params[:ads_text]
 			)
-			params[:ads_images].each do |key, value|
-				@ads.images << Image.create({
-					comment: value["comment"],
-					filename: "#{value['id'][-2..-1].downcase}/#{value['filename']}"
-				})
+			if params[:ads_images]
+				params[:ads_images].each do |key, value|
+					@ads.images << Image.create({
+						comment: value["comment"],
+						filename: "#{value['id'][-2..-1].downcase}/#{value['filename']}"
+					})
+				end
 			end
 			@ads.save!
 		end

@@ -56,7 +56,7 @@ window.store_index = ->
 window.restore_index = ->
 	stored_index_content = window.localStorage.getItem("ads_list")
 	ads_list_content = $(".ads_list").html()
-	if !ads_list_content && stored_index_content || ads_list_content.length > 0 && stored_index_content && ads_list_content.length < stored_index_content.length
+	if !ads_list_content && stored_index_content || ads_list_content && ads_list_content.length > 0 && stored_index_content && ads_list_content.length < stored_index_content.length
 		$(".ads_list").html(stored_index_content.replace(/^[\s\S]+"ads_list">/,'').replace(/<\/div>$/,''))
 
 #--------------------------------------------------------------------------------------------------
@@ -74,7 +74,6 @@ window.update_index = (data, params) ->
 window.draw_index = (response, params) ->
 	fn = params["position"]
 	if $("#ads_index_mini").length > 0
-		console.log "index_mini"
 		if $($("#ads_index_mini .ads_list")).length > 0
 			if fn
 				$(".ads_list")[fn]($(response).children())
@@ -84,7 +83,6 @@ window.draw_index = (response, params) ->
 			$("#ads_index_mini").html(response)
 			$("#ads_index_mini h1").remove()
 	if $("#content > .ads_list").length > 0
-		console.log "main index"
 		if fn
 			$("#content > .ads_list")[fn]($(response).children())
 	convert_data_datetime()

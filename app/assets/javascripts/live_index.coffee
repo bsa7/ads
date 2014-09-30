@@ -5,7 +5,6 @@ $(document).ready ->
 
 #--------------------------------------------------------------------------------------------------
 latest_ads = ->
-	console.log $("[data-datetime]")
 	date_str = $("[data-datetime]")[0].getAttribute("data-datetime")
 	datetime = new Date(date_str)
 	timestamp: datetime.getTime()
@@ -23,11 +22,12 @@ stream_responder = (data) ->
 		window.get_ajax "/",
 			layout: false
 			timezone: window.timezone_name()
-			timestamp: true
-			later_than_date: client_timestamp["date"]
 			later_than: client_timestamp["timestamp"]
 			count: window.limit_2
-		, true, "GET", window.update_index, {layout: false, position: "prepend"}, "json"
+		, true, "GET", window.update_index,
+			layout: false
+			position: "prepend"
+		, "json"
 
 #--------------------------------------------------------------------------------------------------
 init_event_src = ->

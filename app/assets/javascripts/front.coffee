@@ -41,7 +41,15 @@ infinite_ajax_scroll = (elem) ->
 		last_ads_timestamp = Date.parse( $(".ads_list > .ad_item:last-of-type .ad_created_at p").attr("data-datetime") )
 		so_oldiest_we_never_wanted = !not_answered_request_timestamp || not_answered_request_timestamp && last_ads_timestamp && parseInt(not_answered_request_timestamp) <= parseInt(last_ads_timestamp)
 		if so_oldiest_we_never_wanted
-			window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, older_than: last_ads_timestamp, count: window.limit_2}, true, "GET", window.update_index, {layout: false, position: "append"}, "json"
+			window.get_ajax "/", 
+				layout: false
+				timezone: window.timezone_name()
+				older_than: last_ads_timestamp
+				count: window.limit_2
+			, true, "GET", window.update_index, 
+				layout: false
+				position: "append"
+			, "json"
 			window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
 	
 

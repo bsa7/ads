@@ -5,7 +5,6 @@ class ClassifiedAdsController < ApplicationController
 
  # ***********************************************************************************************
 	def index_channel
-		Rails.logger.debug params.inspect
 		notify_client
 	end
 
@@ -67,7 +66,6 @@ class ClassifiedAdsController < ApplicationController
 			@client_timezone = params[:timezone] || "UTC"
 			date = Time.at((params[:older_than] || params[:later_than]).to_i/1000).in_time_zone("UTC").strftime("%Y-%m-%d %H:%M:%S")
 		end
-		Rails.logger.debug "#{'=='*88} #{date}"
 		if params && params[:count]
 			count = params[:count] || Count_of_ads
 		end
@@ -78,7 +76,6 @@ class ClassifiedAdsController < ApplicationController
 		else
 			@classified_ads = ClassifiedAd.order('created_at DESC').limit(Count_of_ads)
 		end
-		Rails.logger.debug @classified_ads.map{|x|x.created_at}.join(", ")
 		render layout: need_layout(params)
 	end
 	

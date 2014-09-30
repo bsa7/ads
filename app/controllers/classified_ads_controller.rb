@@ -68,9 +68,9 @@ class ClassifiedAdsController < ApplicationController
 			@client_timezone = params[:timezone] || "UTC"
 			data = Time.at(params[:older_than].to_i/1000).in_time_zone("UTC").strftime("%Y-%m-%d %H:%M:%S")
 			count = params[:count] || Count_of_ads
-			@classified_ads = ClassifiedAd.where("created_at < '#{data}'").order('created_at DESC').limit(Count_of_ads)
+			@classified_ads = ClassifiedAd.includes(:images).where("created_at < '#{data}'").order('created_at DESC').limit(Count_of_ads)
 		else
-			@classified_ads = ClassifiedAd.order('created_at DESC').limit(Count_of_ads)
+			@classified_ads = ClassifiedAd.includes(:images).order('created_at DESC').limit(Count_of_ads)
 		end
 		render layout: need_layout(params)
 	end

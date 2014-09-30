@@ -26,26 +26,24 @@ window.doc_ready = ->
 		height: "#{window_size.height-parseInt($('#content').css('margin-top'))-30}px"
 	$("#ads_index_mini").css
 		height: "#{window_size.height-100}px"
-		
 	$("#ads_index_mini").scroll ->
-#		console.log $(this).scrollTop(), $(this).height(), this.scrollHeight
-#		console.log scrolled_to_bottom_percent(this)
-#		console.log "Has not maintainde requests?", window.localStorage.getItem("not_maintained_request")
-		if scrolled_to_bottom_percent(this) > window.limit_1 && !window.localStorage.getItem("not_maintained_request")
-#			console.log "It's time to load oldiest ads..."
-			not_answered_request_timestamp = window.localStorage.getItem("not_maintained_request")
-			if isNaN(not_answered_request_timestamp)
-				window.localStorage.removeItem("not_maintained_request")
-				not_answered_request_timestamp = null
-			last_ads_timestamp = Date.parse( $(".ads_list > .ad_item:last-of-type .ad_created_at p").attr("data-datetime") )
-#			console.log 42, not_answered_request_timestamp, last_ads_timestamp, parseInt(not_answered_request_timestamp), parseInt(last_ads_timestamp)
-			so_oldiest_we_never_wanted = !not_answered_request_timestamp || not_answered_request_timestamp && last_ads_timestamp && parseInt(not_answered_request_timestamp) <= parseInt(last_ads_timestamp)
-#			console.log 44, so_oldiest_we_never_wanted
-			if so_oldiest_we_never_wanted
-				window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, older_than: last_ads_timestamp, count: window.limit_2}, true, "GET", window.update_index, {layout: false, position: "append"}, "json"
-				window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
+		infinite_ajax_scroll(this)
 	convert_data_datetime()
 	window.restore_index()
+
+#--------------------------------------------------------------------------------------------------
+infinite_ajax_scroll = (elem) ->
+	if scrolled_to_bottom_percent(elem) > window.limit_1 && !window.localStorage.getItem("not_maintained_request")
+		not_answered_request_timestamp = window.localStorage.getItem("not_maintained_request")
+		if isNaN(not_answered_request_timestamp)
+			window.localStorage.removeItem("not_maintained_request")
+			not_answered_request_timestamp = null
+		last_ads_timestamp = Date.parse( $(".ads_list > .ad_item:last-of-type .ad_created_at p").attr("data-datetime") )
+		so_oldiest_we_never_wanted = !not_answered_request_timestamp || not_answered_request_timestamp && last_ads_timestamp && parseInt(not_answered_request_timestamp) <= parseInt(last_ads_timestamp)
+		if so_oldiest_we_never_wanted
+			window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, older_than: last_ads_timestamp, count: window.limit_2}, true, "GET", window.update_index, {layout: false, position: "append"}, "json"
+			window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
+	
 
 #--------------------------------------------------------------------------------------------------
 window.store_index = ->

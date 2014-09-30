@@ -353,6 +353,12 @@ textarea.form-control {
 	display: none;
 }
 
+.index_image_preview {
+	width: 100px;
+	margin: 0px 20px 20px 0px;
+	display: inline-block;
+}
+
 .ad_item {
 	display: block;
 	position: relative;
@@ -363,6 +369,7 @@ textarea.form-control {
 }
 
 .ad_item a {
+	vertical-align: top;
 	display: block;
 	padding: 20px;
 	width: 100%;

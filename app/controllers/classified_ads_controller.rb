@@ -63,15 +63,22 @@ class ClassifiedAdsController < ApplicationController
 
  # ***********************************************************************************************
 	def index
-		
-		if params && params[:older_than]
+		if params && params[:timezone]
 			@client_timezone = params[:timezone] || "UTC"
-			data = Time.at(params[:older_than].to_i/1000).in_time_zone("UTC").strftime("%Y-%m-%d %H:%M:%S")
+			date = Time.at((params[:older_than] || params[:later_than]).to_i/1000).in_time_zone("UTC").strftime("%Y-%m-%d %H:%M:%S")
+		end
+		Rails.logger.debug "#{'=='*88} #{date}"
+		if params && params[:count]
 			count = params[:count] || Count_of_ads
-			@classified_ads = ClassifiedAd.where("created_at < '#{data}'").order('created_at DESC').limit(Count_of_ads)
+		end
+		if params && params[:older_than]
+			@classified_ads = ClassifiedAd.where("created_at < '#{date}'").order('created_at DESC').limit(Count_of_ads)
+		elsif params && params[:later_than]
+			@classified_ads = ClassifiedAd.where("created_at > '#{date}'").order('created_at DESC').limit(Count_of_ads)
 		else
 			@classified_ads = ClassifiedAd.order('created_at DESC').limit(Count_of_ads)
 		end
+		Rails.logger.debug @classified_ads.map{|x|x.created_at}.join(", ")
 		render layout: need_layout(params)
 	end
 	

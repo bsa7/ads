@@ -5,9 +5,11 @@ $(document).ready ->
 
 #--------------------------------------------------------------------------------------------------
 latest_ads = ->
-	datetime = new Date($("[data-datetime]")[0].getAttribute("data-datetime"))
+	console.log $("[data-datetime]")
+	date_str = $("[data-datetime]")[0].getAttribute("data-datetime")
+	datetime = new Date(date_str)
 	timestamp: datetime.getTime()
-	date: datetime
+	date: date_str
 
 #--------------------------------------------------------------------------------------------------
 doc_ready = ->
@@ -18,12 +20,19 @@ stream_responder = (data) ->
 	server_timestamp = new Date(data).getTime()
 	client_timestamp = latest_ads()
 	if server_timestamp > client_timestamp["timestamp"]
-		window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, later_than: client_timestamp["date"], count: window.limit_2}, true, "GET", window.update_index, {layout: false, position: "prepend"}, "json"
+		window.get_ajax "/",
+			layout: false
+			timezone: window.timezone_name()
+			timestamp: true
+			later_than_date: client_timestamp["date"]
+			later_than: client_timestamp["timestamp"]
+			count: window.limit_2
+		, true, "GET", window.update_index, {layout: false, position: "prepend"}, "json"
 
 #--------------------------------------------------------------------------------------------------
 init_event_src = ->
 	if eventSrc is undefined
-		eventSrc = new EventSource("/index_channel?later_than='#{latest_ads()['timestamp']}'")
+		eventSrc = new EventSource("/index_channel")
 	eventSrc.onmessage = (e) ->
 		stream_responder(e.data)
 

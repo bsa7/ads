@@ -375,6 +375,7 @@ textarea.form-control {
 }
 
 .ad_item a {
+	overflow: hidden;
 	vertical-align: top;
 	display: block;
 	padding: 20px;

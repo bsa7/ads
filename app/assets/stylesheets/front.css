@@ -353,9 +353,10 @@ textarea.form-control {
 	display: none;
 }
 
-.index_image_preview {
+.ad_item img {
+	float: left;
 	width: 100px;
-	margin: 0px 20px 20px 0px;
+	margin: 0px 20px 0px 0px;
 	display: inline-block;
 }
 
@@ -366,6 +367,11 @@ textarea.form-control {
 	background-color: #fefefe;
 	text-align: left;
 	cursor: pointer;
+}
+
+.ad_item p {
+	display: inline;
+	vertical-align: top;
 }
 
 .ad_item a {

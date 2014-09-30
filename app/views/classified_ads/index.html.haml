@@ -5,8 +5,9 @@
 		.ad_item
 			%a{href: "/ad/#{ad.id}"}
 				- if ad.images.first
-					%img{class: "index_image_preview", src: "/system/uploads/#{ad.images.first.filename}"}
-				= ad.plain_text.first_n_words Count_words_in_ads_preview
+					%img{src: "/system/uploads/#{ad.images.first.filename}"}
+				%p
+					= ad.plain_text.first_n_words Count_words_in_ads_preview
 				.ad_created_at
 					%p{"data-datetime" => ad.created_at}
 

@@ -372,6 +372,7 @@ textarea.form-control {
 .ad_item p {
 	display: inline;
 	vertical-align: top;
+	pointer-events: none;
 }
 
 .ad_item a {

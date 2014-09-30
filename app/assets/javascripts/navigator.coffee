@@ -100,7 +100,7 @@ document_onclick = (e) ->
 #--------------------------------------------------------------------------------------------------
 customize_layout = ->
 	to_index_items = ["#ads_index_mini", "#to_home"]
-	if $(".ads_list").length <1 
+	if $(".ads_list").length < 1 
 		index_content = window.localStorage.getItem("ads_list")
 		if index_content && index_content.length > 10
 			window.draw_index index_content, {layout: false}

@@ -57,7 +57,7 @@ window.store_index = ->
 window.restore_index = ->
 	stored_index_content = window.localStorage.getItem("ads_list")
 	ads_list_content = $(".ads_list").html()
-	if !ads_list_content || ads_list_content.length > 0 && stored_index_content && ads_list_content.length < stored_index_content.length
+	if !ads_list_content && stored_index_content || ads_list_content.length > 0 && stored_index_content && ads_list_content.length < stored_index_content.length
 #		console.log "index restored"
 		#console.log stored_index_content
 #		console.log $(".ads_list")

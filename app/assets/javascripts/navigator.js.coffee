@@ -53,7 +53,9 @@ draw_ajax_page = (response, params) ->
 
 #--------------------------------------------------------------------------------------------------
 setPage = (page, params, target, success_callback = null, callback_params = null) ->
+	window.store_index()
 	if navCache(page) && ( navCache(page)["html"] != "" && navCache(page)["html"] != null )
+#		console.log navCache(page)
 		$(target).html(navCache(page).html)
 		if success_callback
 			success_callback(callback_params)
@@ -62,6 +64,7 @@ setPage = (page, params, target, success_callback = null, callback_params = null
 			type: "page"
 		, document.title, page
 	else
+#		console.log "Cache no"
 		window.get_ajax "#{page}", {layout: false, timestamp: true}, ASYNC, "GET", draw_ajax_page, {layout: false, page: page, target: target}, "json"
 
 #--------------------------------------------------------------------------------------------------
@@ -87,28 +90,25 @@ window.onpopstate = (e) ->
 
 #--------------------------------------------------------------------------------------------------
 $(document).click (e)->
-#	console.log "$(document).click (e)->"
 	document_onclick e
 
 #--------------------------------------------------------------------------------------------------
 document_onclick = (e) ->
-#	console.log e
-#	console.log /^[aA]$/.test(e.target.tagName), /^\//.test(e.target.attr("href"))
-#	console.log /^[aA]$/.test(e.target.tagName)
-#	console.log /^\//.test(e.target.getAttribute("href"))
 	if /^[aA]$/.test(e.target.tagName) && /^\//.test(e.target.getAttribute("href"))
 		e.preventDefault()
-#		console.log $(e.target).attr("href")
 		setPage $(e.target).attr("href"), {}, "#content"
 	customize_layout()
-
+#	window.restore_index()
+	
 #--------------------------------------------------------------------------------------------------
 customize_layout = ->
-#	console.log "customize_layout", $(".ads_list").length#, $($(".ads_list")[0]).css("display")
 	to_index_items = ["#ads_index_mini", "#to_home"]
 	if $(".ads_list").length <1 
-#		console.log "нарисуем сбоку индекс"
-		window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", window.draw_index_mini, {layout: false}, "json"
+		index_content = window.localStorage.getItem("ads_list")
+		if index_content && index_content.length > 10
+			window.draw_index_mini index_content, {layout: false}
+		else
+			window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", window.draw_index_mini, {layout: false}, "json"
 		for item_to_show in to_index_items 
 			$(item_to_show).css
 				display: "block"

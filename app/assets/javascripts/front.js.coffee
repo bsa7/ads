@@ -30,10 +30,8 @@ window.doc_ready = ->
 	$("#ads_index_mini").scroll ->
 #		console.log $(this).scrollTop(), $(this).height(), this.scrollHeight
 #		console.log scrolled_to_bottom_percent(this)
-		limit_1 = .5 # На какую часть нужно промотеть эл-т до низа, чтобы сработал ajax
-		limit_2 = 5  # Сколько скролл хочет загрузить свежих статей
 #		console.log "Has not maintainde requests?", window.localStorage.getItem("not_maintained_request")
-		if scrolled_to_bottom_percent(this) > limit_1 && !window.localStorage.getItem("not_maintained_request")
+		if scrolled_to_bottom_percent(this) > window.limit_1 && !window.localStorage.getItem("not_maintained_request")
 #			console.log "It's time to load oldiest ads..."
 			not_answered_request_timestamp = window.localStorage.getItem("not_maintained_request")
 			if isNaN(not_answered_request_timestamp)
@@ -44,27 +42,48 @@ window.doc_ready = ->
 			so_oldiest_we_never_wanted = !not_answered_request_timestamp || not_answered_request_timestamp && last_ads_timestamp && parseInt(not_answered_request_timestamp) <= parseInt(last_ads_timestamp)
 #			console.log 44, so_oldiest_we_never_wanted
 			if so_oldiest_we_never_wanted
-				timezone_name = Intl.DateTimeFormat().resolvedOptions().timeZone
-				window.get_ajax "/", {layout: false, timezone: timezone_name, timestamp: true, older_than: last_ads_timestamp, count: limit_2}, true, "GET", update_index_mini, {layout: false}, "json"
+				window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, older_than: last_ads_timestamp, count: window.limit_2}, true, "GET", window.update_index_mini, {layout: false, position: "append"}, "json"
 				window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
 	convert_data_datetime()
+	window.restore_index()
+
+#--------------------------------------------------------------------------------------------------
+window.store_index = ->
+#	console.log "index stored"
+	index_content = $(".ads_list").parent().html()
+	window.localStorage.setItem("ads_list", index_content)
+
+#--------------------------------------------------------------------------------------------------
+window.restore_index = ->
+	stored_index_content = window.localStorage.getItem("ads_list")
+	ads_list_content = $(".ads_list").html()
+	if !ads_list_content || ads_list_content.length > 0 && stored_index_content && ads_list_content.length < stored_index_content.length
+#		console.log "index restored"
+		#console.log stored_index_content
+#		console.log $(".ads_list")
+		$(".ads_list").html(stored_index_content.replace(/^[\s\S]+"ads_list">/,'').replace(/<\/div>$/,''))
+#		console.log $(".ads_list")
 
 #--------------------------------------------------------------------------------------------------
 convert_data_datetime = ->
 	for p in $("[data-datetime]")
-		console.log p.getAttribute("data-datetime")
-		d = new Date(p.getAttribute("data-datetime")).toLocaleString('ru-RU', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })
+#		console.log p.getAttribute("data-datetime")
+		d = new Date(p.getAttribute("data-datetime"))#.toLocaleString('ru-RU', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })
 		$(p).html(d)
 
 #--------------------------------------------------------------------------------------------------
-update_index_mini = (data) ->
-	window.draw_index_mini data
+window.update_index_mini = (data, params) ->
+	window.draw_index_mini data, params
 	window.localStorage.removeItem("not_maintained_request")
 
 #--------------------------------------------------------------------------------------------------
 window.draw_index_mini = (response, params) ->
 	if $($("#ads_index_mini .ads_list")).length > 0
-		$(".ads_list").append($(response).children())#.hide().show(1)
+		if params["position"]
+			fn = params["position"]
+			$(".ads_list")[fn]($(response).children())
+		else
+			$(".ads_list")[append]($(response).children())
 	else
 		$("#ads_index_mini").html(response)
 		$("#ads_index_mini h1").remove()

@@ -1,4 +1,6 @@
-window.json_cache={}
+window.json_cache = {}
+window.limit_1 = .5 # На какую часть нужно промотеть эл-т до низа, чтобы сработал ajax
+window.limit_2 = 5  # Сколько скролл хочет загрузить свежих статей
 
 #--------------------------------------------------------------------------------------------------
 window.current_timestamp = ->
@@ -75,3 +77,7 @@ window.get_ajax = (url, data_adds, async = false, query_type = "GET", callback =
 window.zeroPad = (num, places) ->
 	zero = places - num.toString().length + 1
 	Array(+(zero > 0 and zero)).join("0") + num
+
+#--------------------------------------------------------------------------------------------------
+window.timezone_name = ->
+	Intl.DateTimeFormat().resolvedOptions().timeZone

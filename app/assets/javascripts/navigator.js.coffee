@@ -106,9 +106,9 @@ customize_layout = ->
 	if $(".ads_list").length <1 
 		index_content = window.localStorage.getItem("ads_list")
 		if index_content && index_content.length > 10
-			window.draw_index_mini index_content, {layout: false}
+			window.draw_index index_content, {layout: false}
 		else
-			window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", window.draw_index_mini, {layout: false}, "json"
+			window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", window.draw_index, {layout: false}, "json"
 		for item_to_show in to_index_items 
 			$(item_to_show).css
 				display: "block"

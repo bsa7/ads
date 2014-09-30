@@ -21,7 +21,7 @@ stream_responder = (data) ->
 #	console.log "Новейшая статья у клиента:", latest_ads_timestamp()
 	if server_timestamp > client_timestamp["timestamp"]
 		console.log "Надо обновить индекс, есть новые статьи."
-		window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, later_than: client_timestamp["date"], count: window.limit_2}, true, "GET", window.update_index_mini, {layout: false, position: "prepend"}, "json"
+		window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, later_than: client_timestamp["date"], count: window.limit_2}, true, "GET", window.update_index, {layout: false, position: "prepend"}, "json"
 
 #--------------------------------------------------------------------------------------------------
 init_event_src = ->

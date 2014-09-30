@@ -42,14 +42,13 @@ window.doc_ready = ->
 			so_oldiest_we_never_wanted = !not_answered_request_timestamp || not_answered_request_timestamp && last_ads_timestamp && parseInt(not_answered_request_timestamp) <= parseInt(last_ads_timestamp)
 #			console.log 44, so_oldiest_we_never_wanted
 			if so_oldiest_we_never_wanted
-				window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, older_than: last_ads_timestamp, count: window.limit_2}, true, "GET", window.update_index_mini, {layout: false, position: "append"}, "json"
+				window.get_ajax "/", {layout: false, timezone: window.timezone_name(), timestamp: true, older_than: last_ads_timestamp, count: window.limit_2}, true, "GET", window.update_index, {layout: false, position: "append"}, "json"
 				window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
 	convert_data_datetime()
 	window.restore_index()
 
 #--------------------------------------------------------------------------------------------------
 window.store_index = ->
-#	console.log "index stored"
 	index_content = $(".ads_list").parent().html()
 	window.localStorage.setItem("ads_list", index_content)
 
@@ -58,35 +57,36 @@ window.restore_index = ->
 	stored_index_content = window.localStorage.getItem("ads_list")
 	ads_list_content = $(".ads_list").html()
 	if !ads_list_content && stored_index_content || ads_list_content.length > 0 && stored_index_content && ads_list_content.length < stored_index_content.length
-#		console.log "index restored"
-		#console.log stored_index_content
-#		console.log $(".ads_list")
 		$(".ads_list").html(stored_index_content.replace(/^[\s\S]+"ads_list">/,'').replace(/<\/div>$/,''))
-#		console.log $(".ads_list")
 
 #--------------------------------------------------------------------------------------------------
 convert_data_datetime = ->
 	for p in $("[data-datetime]")
-#		console.log p.getAttribute("data-datetime")
 		d = new Date(p.getAttribute("data-datetime"))#.toLocaleString('ru-RU', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })
 		$(p).html(d)
 
 #--------------------------------------------------------------------------------------------------
-window.update_index_mini = (data, params) ->
-	window.draw_index_mini data, params
+window.update_index = (data, params) ->
+	window.draw_index data, params
 	window.localStorage.removeItem("not_maintained_request")
 
 #--------------------------------------------------------------------------------------------------
-window.draw_index_mini = (response, params) ->
-	if $($("#ads_index_mini .ads_list")).length > 0
-		if params["position"]
-			fn = params["position"]
-			$(".ads_list")[fn]($(response).children())
+window.draw_index = (response, params) ->
+	fn = params["position"]
+	if $("#ads_index_mini").length > 0
+		console.log "index_mini"
+		if $($("#ads_index_mini .ads_list")).length > 0
+			if fn
+				$(".ads_list")[fn]($(response).children())
+			else
+				$(".ads_list")[append]($(response).children())
 		else
-			$(".ads_list")[append]($(response).children())
-	else
-		$("#ads_index_mini").html(response)
-		$("#ads_index_mini h1").remove()
+			$("#ads_index_mini").html(response)
+			$("#ads_index_mini h1").remove()
+	if $("#content > .ads_list").length > 0
+		console.log "main index"
+		if fn
+			$("#content > .ads_list")[fn]($(response).children())
 	convert_data_datetime()
 
 

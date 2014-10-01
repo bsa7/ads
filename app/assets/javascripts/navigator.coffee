@@ -2,7 +2,8 @@ setPage = undefined
 ASYNC = true
 NavigationCache = {} unless NavigationCache
 
-#--------------------------------------------------------------------------------------------------
+#-- this navigation cache used for fast page preload without any request to server ----------------
+#-- also timestamp can be used for frequently updated pages
 navCache = (key, value) ->
 	res = null
 	unless typeof window.localStorage is "undefined"
@@ -116,11 +117,9 @@ customize_layout = ->
 				display: "none"
 		$("#ads_index_mini").html("")
 	for ad_item in $(".ad_item")
-#		console.log $(ad_item).children("a")[0].getAttribute("href"), window.location.pathname, $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
 		if $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
 			$(ad_item).removeClass("current")
 		else
 			console.log ad_item
 			$(ad_item).addClass("current")
-#	window.doc_ready()
 

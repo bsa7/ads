@@ -50,9 +50,8 @@ infinite_ajax_scroll = (elem) ->
 				position: "append"
 			, "json"
 			window.localStorage.setItem("not_maintained_request", last_ads_timestamp)
-	
 
-#--------------------------------------------------------------------------------------------------
+#-- we use cached index in all cases, if already downloaded some ads from server - this save it to window.localStorage -
 window.store_index = ->
 	index_content = $(".ads_list").parent().html()
 	window.localStorage.setItem("ads_list", index_content)
@@ -64,13 +63,13 @@ window.restore_index = ->
 	if !ads_list_content && stored_index_content || ads_list_content && ads_list_content.length > 0 && stored_index_content && ads_list_content.length < stored_index_content.length
 		$(".ads_list").html(stored_index_content.replace(/^[\s\S]+"ads_list">/,'').replace(/<\/div>$/,''))
 
-#--------------------------------------------------------------------------------------------------
+#-- we recieve all ads with server time in attribute data-datetime. So, it ca convert all dates to locale timezone and format -
 convert_data_datetime = ->
 	for p in $("[data-datetime]")
-		d = new Date(p.getAttribute("data-datetime"))#.toLocaleString('ru-RU', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })
+		d = new Date(p.getAttribute("data-datetime"))
 		$(p).html(d)
 
-#--------------------------------------------------------------------------------------------------
+#-- if we receive new portion of ads from server, index must be updated by some params and received html -
 window.update_index = (data, params) ->
 	window.draw_index data, params
 	window.localStorage.removeItem("not_maintained_request")
@@ -91,7 +90,6 @@ window.draw_index = (response, params) ->
 		if fn
 			$("#content > .ads_list")[fn]($(response).children())
 	convert_data_datetime()
-
 
 #--------------------------------------------------------------------------------------------------
 window.get_token = ->
@@ -177,11 +175,7 @@ document_onclick = (e) ->
 					css:
 						'background-color': 'rgba(111,111,111,0.6)'
 			beforeClose: ->
-#				console.log "fancybox will be closed"
-#				console.log "before close fancybox "
-#				console.log $("textarea.ad_text").val()
 				$("textarea.ad_text").html($("textarea.ad_text").val())
-#				console.log "window.localStorage.remainingSpace", window.localStorage
 				window.localStorage.setItem("new_ads_editor", $(".fancybox-inner").html())
 		set_file_listener()
 	else if /input_file/.test e.target.id
@@ -202,16 +196,12 @@ document_onclick = (e) ->
 			ads_images = []
 			for img in $(".img_thumb")
 				image = $(img)
-#				console.log img.id
 				progressbar = image.parent().children("progress.upload-progress")
 				ads_images.push
 					id: $(".new_ads")[0].id #img.id
 					filename: image.children("img").attr("data-filename")
 					comment: image.children("p[data-type='comment_img']").html()
 					uploaded: parseInt(progressbar.attr("value")) / parseInt(progressbar.attr("max"))
-#				console.log $(progressbar)
-#				console.log progressbar.attr("value")
-#				console.log progressbar.attr("max")
 			window.get_ajax "/add_ads", {ads_text: ad_text, ads_images: ads_images}, true, "POST", render_new_ads
 			$.fancybox.close()
 			window.status_body "success", HandlebarsTemplates['ads_posted']()
@@ -248,7 +238,6 @@ set_file_listener = ->
 			o.readAsDataURL file
 			o.onload = (e) ->
 				image_base64 = e.target.result
-#				console.log @file_id, @file.name
 				preview = HandlebarsTemplates['img_thumb']({src: image_base64, img_comment: @file.name, id: @file_id})
 				pic_real_width = undefined
 				pic_scaled_width = undefined
@@ -269,7 +258,7 @@ set_file_listener = ->
 				upload @file, onSuccess, onError, onProgress, @file_id
 
 #--------------------------------------------------------------------------------------------------
-onSuccess = (e, bar_id) ->
+onUploadSuccess = (e, bar_id) ->
 #	console.log bar_id
 	$("##{bar_id} progress").css
 		opacity: 0;
@@ -280,44 +269,40 @@ onSuccess = (e, bar_id) ->
 	$("##{bar_id} img").attr
 		src: "/system/uploads/#{ads_images_folder}/#{img_filename}"
 
-#--------------------------------------------------------------------------------------------------
-onLoad = ->
-	console.log "loaded"
-
-#--------------------------------------------------------------------------------------------------
-onError = (e) ->
+#-- upload error listener -------------------------------------------------------------------------
+onUploadError = (e) ->
 	console.log "error"
 	console.log e
 
-#--------------------------------------------------------------------------------------------------
-onProgress = (loaded, total, bar_id) ->
+#-- draw progressbar on uploaded image preview ----------------------------------------------------
+onUploadProgress = (loaded, total, bar_id) ->
 	$("##{bar_id} progress").attr("value", "#{loaded / total * 100}")
 
-#--------------------------------------------------------------------------------------------------
+#-- Upload one file to host ---------------------------------------------------------------------
 upload = (file, onSuccess, onError, onProgress, bar_id) ->
 	xhr = new XMLHttpRequest()
 	xhr.onload = xhr.onerror = ->
 		if @status isnt 200
-			onError this
+			onUploadError this
 			return
-		onSuccess(this, bar_id)
+		onUploadSuccess(this, bar_id)
 		return
 
 	xhr.upload.onprogress = (event) ->
-		onProgress event.loaded, event.total, bar_id
+		onUploadProgress event.loaded, event.total, bar_id
 		return
 
 	xhr.open "POST", "/upload_image?file_name=#{file.name}&ads_id=#{$('.new_ads').attr('id')}", true
 	xhr.setRequestHeader('X-CSRF-Token', window.get_token())
 	xhr.send file
 
-#--------------------------------------------------------------------------------------------------
+#-- cancel all dragstart events -------------------------------------------------------------------
 document.addEventListener "dragstart", ((e) ->
 	e.preventDefault()
 	return false
 ), false
 
-#--------------------------------------------------------------------------------------------------
+#-- make random id string -------------------------------------------------------------------------
 makeid = (length_of) ->
 	text = ""
 	possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -345,7 +330,7 @@ $(document).click (e)->
 		$("[id$='_wrapper']").css
 			top: "-200px"
 
-#--------------------------------------------------------------------------------------------------
+#- return horizontal coord of right side of element -----------------------------------------------
 get_right = (elem) ->
 	$(elem).position().left+$(elem).width()
 

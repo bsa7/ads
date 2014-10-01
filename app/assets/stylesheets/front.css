@@ -370,7 +370,7 @@ textarea.form-control {
 	border-left: 3px solid white;
 }
 
-.ad_item p, .ad_item img {
+.ad_item p, .ad_item img, .ad_item .ad_created_at {
 	pointer-events: none;
 
 }

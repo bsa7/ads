@@ -120,6 +120,5 @@ customize_layout = ->
 		if $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
 			$(ad_item).removeClass("current")
 		else
-			console.log ad_item
 			$(ad_item).addClass("current")
 

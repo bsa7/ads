@@ -97,6 +97,11 @@ window.draw_index = (response, params) ->
 		if fn
 			$("#content > .ads_list")[fn]($(response).children())
 	convert_data_datetime()
+	for ad_item in $(".ad_item")
+		if $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
+			$(ad_item).removeClass("current")
+		else
+			$(ad_item).addClass("current")
 
 #--------------------------------------------------------------------------------------------------
 scrolled_to_bottom_percent = (o) ->

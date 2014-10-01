@@ -123,9 +123,4 @@ window.customize_layout = ->
 			$(item_to_show).css
 				display: "none"
 		$("#ads_index_mini").html("")
-	for ad_item in $(".ad_item")
-		if $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
-			$(ad_item).removeClass("current")
-		else
-			$(ad_item).addClass("current")
 

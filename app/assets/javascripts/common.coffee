@@ -81,3 +81,54 @@ window.zeroPad = (num, places) ->
 #--------------------------------------------------------------------------------------------------
 window.timezone_name = ->
 	Intl.DateTimeFormat().resolvedOptions().timeZone
+
+#--------------------------------------------------------------------------------------------------
+window.get_token = ->
+	$('meta[name="csrf-token"]').attr('content')
+
+#-- show a status message ---------------------------------------------------------------------------
+window.status_body = (status, html, seconds = null) ->
+	if seconds == 0
+		$("##{status}_wrapper > div.data-message").html html
+		$("##{status}_wrapper > div.data-transparent").css
+			opacity: 0.9
+		$("##{status}_wrapper").css
+			top: "0px"
+	else
+		unless seconds
+			seconds = 4
+		seconds *= 1000
+		if $("##{status}_wrapper > div.data-transparent").is(':animated')
+			$("##{status}_wrapper > div.data-transparent").stop()
+		if $("##{status}_wrapper > div.data-message").is(':animated')
+			$("##{status}_wrapper > div.data-message").stop()
+		if $("##{status}_wrapper").is(':animated')
+			$("##{status}_wrapper").stop()
+		$("##{status}_wrapper").css
+			opacity: 0.9
+			top: "0px"
+		$("##{status}_wrapper > div.data-message").html html
+		left = ($("##{status}_wrapper").width() - $("##{status}_wrapper > .data-message").width())/2
+		top = ($("##{status}_wrapper").height() - $("##{status}_wrapper > .data-message").height())/2
+		$("##{status}_wrapper > .data-message").css
+			top: "#{top}px"
+			left: "#{left}px"
+		$("##{status}_wrapper > div.data-transparent").css
+			opacity: 0.9
+		$("##{status}_wrapper > div.data-message").css
+			opacity: 1
+		$("##{status}_wrapper > div.data-transparent").animate
+			opacity: 0
+			WebkitTransition: "opacity 2s ease-in-elastic"
+			MozTransition: "opacity 2s ease-in-elastic"
+			MsTransition: "opacity 2s ease-in-elastic"
+			OTransition: "opacity 2s ease-in-elastic"
+			transition: "opacity 2s ease-in-elastic"
+		, seconds, ->
+		$("##{status}_wrapper > div.data-message").animate
+			opacity: 0
+		, seconds, ->
+			$("##{status}_wrapper").css #.animate
+				opacity: 0
+				top: "-200px"
+

@@ -53,8 +53,12 @@ infinite_ajax_scroll = (elem) ->
 
 #-- we use cached index in all cases, if already downloaded some ads from server - this save it to window.localStorage -
 window.store_index = ->
-	index_content = $(".ads_list").parent().html()
-	window.localStorage.setItem("ads_list", index_content)
+	index_content1 = $("#ads_index_mini .ads_list").parent().html() || ""
+	index_content2 = $("#content > .ads_list").parent().html() || ""
+	index_content = if index_content1.length > index_content2.length then index_content1 else index_content2
+	cache = window.localStorage.getItem("ads_list")
+	if index_content && cache && index_content.length > cache.length
+		window.localStorage.setItem("ads_list", index_content)
 
 #--------------------------------------------------------------------------------------------------
 window.restore_index = ->
@@ -76,70 +80,26 @@ window.update_index = (data, params) ->
 
 #--------------------------------------------------------------------------------------------------
 window.draw_index = (response, params) ->
-	fn = params["position"]
+	if params
+		fn = params["position"]
 	if $("#ads_index_mini").length > 0
 		if $($("#ads_index_mini .ads_list")).length > 0
 			if fn
+				console.log "83"
 				$(".ads_list")[fn]($(response).children())
 			else
-				$(".ads_list")[append]($(response).children())
+				console.log "86"
+				$(".ads_list").append($(response).children())
 		else
+			console.log "89"
 			$("#ads_index_mini").html(response)
 			$("#ads_index_mini h1").remove()
 	if $("#content > .ads_list").length > 0
+		console.log "93"
 		if fn
+			console.log "95"
 			$("#content > .ads_list")[fn]($(response).children())
 	convert_data_datetime()
-
-#--------------------------------------------------------------------------------------------------
-window.get_token = ->
-	$('meta[name="csrf-token"]').attr('content')
-
-#-- show a status message ---------------------------------------------------------------------------
-window.status_body = (status, html, seconds = null) ->
-	if seconds == 0
-		$("##{status}_wrapper > div.data-message").html html
-		$("##{status}_wrapper > div.data-transparent").css
-			opacity: 0.9
-		$("##{status}_wrapper").css
-			top: "0px"
-	else
-		unless seconds
-			seconds = 4
-		seconds *= 1000
-		if $("##{status}_wrapper > div.data-transparent").is(':animated')
-			$("##{status}_wrapper > div.data-transparent").stop()
-		if $("##{status}_wrapper > div.data-message").is(':animated')
-			$("##{status}_wrapper > div.data-message").stop()
-		if $("##{status}_wrapper").is(':animated')
-			$("##{status}_wrapper").stop()
-		$("##{status}_wrapper").css
-			opacity: 0.9
-			top: "0px"
-		$("##{status}_wrapper > div.data-message").html html
-		left = ($("##{status}_wrapper").width() - $("##{status}_wrapper > .data-message").width())/2
-		top = ($("##{status}_wrapper").height() - $("##{status}_wrapper > .data-message").height())/2
-		$("##{status}_wrapper > .data-message").css
-			top: "#{top}px"
-			left: "#{left}px"
-		$("##{status}_wrapper > div.data-transparent").css
-			opacity: 0.9
-		$("##{status}_wrapper > div.data-message").css
-			opacity: 1
-		$("##{status}_wrapper > div.data-transparent").animate
-			opacity: 0
-			WebkitTransition: "opacity 2s ease-in-elastic"
-			MozTransition: "opacity 2s ease-in-elastic"
-			MsTransition: "opacity 2s ease-in-elastic"
-			OTransition: "opacity 2s ease-in-elastic"
-			transition: "opacity 2s ease-in-elastic"
-		, seconds, ->
-		$("##{status}_wrapper > div.data-message").animate
-			opacity: 0
-		, seconds, ->
-			$("##{status}_wrapper").css #.animate
-				opacity: 0
-				top: "-200px"
 
 #--------------------------------------------------------------------------------------------------
 scrolled_to_bottom_percent = (o) ->
@@ -202,7 +162,10 @@ document_onclick = (e) ->
 					filename: image.children("img").attr("data-filename")
 					comment: image.children("p[data-type='comment_img']").html()
 					uploaded: parseInt(progressbar.attr("value")) / parseInt(progressbar.attr("max"))
-			window.get_ajax "/add_ads", {ads_text: ad_text, ads_images: ads_images}, true, "POST", render_new_ads
+			window.get_ajax "/add_ads", 
+				ads_text: ad_text
+				ads_images: ads_images
+			, true, "POST", render_new_ads
 			$.fancybox.close()
 			window.status_body "success", HandlebarsTemplates['ads_posted']()
 			window.localStorage.removeItem("new_ads_editor")
@@ -219,8 +182,7 @@ $(document).mousedown (e) ->
 
 #--------------------------------------------------------------------------------------------------
 render_new_ads = (data) ->
-	console.log "New ads created: "
-	console.log data
+	window.customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 set_file_listener = ->
@@ -259,13 +221,11 @@ set_file_listener = ->
 
 #--------------------------------------------------------------------------------------------------
 onUploadSuccess = (e, bar_id) ->
-#	console.log bar_id
 	$("##{bar_id} progress").css
 		opacity: 0;
 	ads_id = $('.new_ads').attr('id')
 	ads_images_folder = ads_id.substring(bar_id.length-2,bar_id.length).toLowerCase()
 	img_filename = $("##{bar_id} img").attr('data-filename')
-#	console.log ads_id, ads_images_folder, img_filename, "##{bar_id} img" , $("#{bar_id} img")
 	$("##{bar_id} img").attr
 		src: "/system/uploads/#{ads_images_folder}/#{img_filename}"
 
@@ -315,11 +275,10 @@ makeid = (length_of) ->
 #-- pause animation in status message block if mouse hover on them ---------------------------------
 $("div[id$='_wrapper']").hover (e)->
 
-  state = '-webkit-animation-play-state'
-  @.css state, (i, v) ->
-    (if v is "paused" then "running" else "paused")
-  @.toggleClass "paused", @.css(state) is "paused"
-
+	state = '-webkit-animation-play-state'
+	@.css state, (i, v) ->
+		(if v is "paused" then "running" else "paused")
+	@.toggleClass "paused", @.css(state) is "paused"
 
 #-- close a success, error message by click ---------------------------------------------------------------------------
 $(document).click (e)->

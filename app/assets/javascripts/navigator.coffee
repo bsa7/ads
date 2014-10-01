@@ -50,7 +50,7 @@ draw_ajax_page = (response, params) ->
 	navCache window.location.pathname, 
 		html: $(params["target"]).html()
 		timestamp: $(params["target"]).attr("data-timestamp")
-	customize_layout()
+	window.customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 setPage = (page, params, target, success_callback = null, callback_params = null) ->
@@ -63,9 +63,16 @@ setPage = (page, params, target, success_callback = null, callback_params = null
 			page: page
 			type: "page"
 		, document.title, page
-		customize_layout()
+		window.customize_layout()
 	else
-		window.get_ajax "#{page}", {layout: false, timestamp: true}, ASYNC, "GET", draw_ajax_page, {layout: false, page: page, target: target}, "json"
+		window.get_ajax "#{page}",
+			layout: false
+			timestamp: true
+		, ASYNC, "GET", draw_ajax_page,
+			layout: false
+			page: page
+			target: target
+		, "json"
 
 #--------------------------------------------------------------------------------------------------
 doc_ready = ->
@@ -76,7 +83,7 @@ doc_ready = ->
 	navCache window.location.pathname,
 		html: $("#content").html()
 		timestamp: $($("#wrapper")).attr("timestamp") || current_timestamp()
-	customize_layout()
+	window.customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 $(document).ready ->
@@ -86,7 +93,7 @@ $(document).ready ->
 window.onpopstate = (e) ->
 	return if !e.state || !e.state.page || !navCache(e.state.page) || !history.pushState
 	$("#content").html navCache(e.state.page)["html"] if navCache(e.state.page)["html"].length > 2 if e.state.type.length > 0
-	customize_layout()
+	window.customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 $(document).click (e)->
@@ -99,19 +106,22 @@ document_onclick = (e) ->
 		setPage $(e.target).attr("href"), {}, "#content"
 	
 #--------------------------------------------------------------------------------------------------
-customize_layout = ->
+window.customize_layout = ->
 	window.restore_index()
 	to_index_items = ["#ads_index_mini", "#to_home"]
-	if $(".ads_list").length < 1 
+	if $("#content .ads_list").length == 0 # if no index present on this page
+		console.log 113
 		index_content = window.localStorage.getItem("ads_list")
-		if index_content && index_content.length > 10
-			window.draw_index index_content, {layout: false}
+		if index_content && index_content.length > 0
+			console.log 115
+			window.draw_index index_content
 		else
-			window.get_ajax "/", {layout: false, timestamp: true}, ASYNC, "GET", window.draw_index, {layout: false}, "json"
-		for item_to_show in to_index_items 
+			console.log 118
+			window.get_ajax "/", {layout: false}, ASYNC, "GET", window.draw_index, {layout: false}, "json"
+		for item_to_show in to_index_items
 			$(item_to_show).css
 				display: "block"
-	else if $(".ads_list").length > 1
+	else if $("#content .ads_list").length > 0
 		for item_to_show in to_index_items
 			$(item_to_show).css
 				display: "none"

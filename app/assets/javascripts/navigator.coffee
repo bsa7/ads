@@ -110,13 +110,10 @@ window.customize_layout = ->
 	window.restore_index()
 	to_index_items = ["#ads_index_mini", "#to_home"]
 	if $("#content .ads_list").length == 0 # if no index present on this page
-		console.log 113
 		index_content = window.localStorage.getItem("ads_list")
 		if index_content && index_content.length > 0
-			console.log 115
 			window.draw_index index_content
 		else
-			console.log 118
 			window.get_ajax "/", {layout: false}, ASYNC, "GET", window.draw_index, {layout: false}, "json"
 		for item_to_show in to_index_items
 			$(item_to_show).css

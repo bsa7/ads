@@ -85,19 +85,14 @@ window.draw_index = (response, params) ->
 	if $("#ads_index_mini").length > 0
 		if $($("#ads_index_mini .ads_list")).length > 0
 			if fn
-				console.log "83"
 				$(".ads_list")[fn]($(response).children())
 			else
-				console.log "86"
 				$(".ads_list").append($(response).children())
 		else
-			console.log "89"
 			$("#ads_index_mini").html(response)
 			$("#ads_index_mini h1").remove()
 	if $("#content > .ads_list").length > 0
-		console.log "93"
 		if fn
-			console.log "95"
 			$("#content > .ads_list")[fn]($(response).children())
 	convert_data_datetime()
 
@@ -117,7 +112,6 @@ init_new_ads = ->
 document_onclick = (e) ->
 	if /new_ad/.test e.target.id
 		content = window.localStorage.getItem("new_ads_editor")
-#		console.log "before load template: #{content}"
 		if !content || content.length == 0
 			content = init_new_ads()
 		$.fancybox

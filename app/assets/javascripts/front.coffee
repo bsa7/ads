@@ -28,15 +28,15 @@ window.doc_ready = ->
 		height: "#{window_size.height-100}px"
 	$("#ads_index_mini").scroll ->
 		infinite_ajax_scroll(this)
+	$("#content").scroll ->
+		if $("#content .ad_list").length > 0
+			infinite_ajax_scroll(this)
 	convert_data_datetime()
 
 #--------------------------------------------------------------------------------------------------
 infinite_ajax_scroll = (elem) ->
-	if scrolled_to_bottom_percent(elem) > window.limit_1 && !window.localStorage.getItem("not_maintained_request")
-		not_answered_request_timestamp = window.localStorage.getItem("not_maintained_request")
-		if isNaN(not_answered_request_timestamp)
-			window.localStorage.removeItem("not_maintained_request")
-			not_answered_request_timestamp = null
+	not_answered_request_timestamp = window.localStorage.getItem("not_maintained_request")
+	if scrolled_to_bottom_percent(elem) > window.limit_1 && !not_answered_request_timestamp
 		last_ads_timestamp = Date.parse( $(".ads_list > .ad_item:last-of-type .ad_created_at p").attr("data-datetime") )
 		so_oldiest_we_never_wanted = !not_answered_request_timestamp || not_answered_request_timestamp && last_ads_timestamp && parseInt(not_answered_request_timestamp) <= parseInt(last_ads_timestamp)
 		if so_oldiest_we_never_wanted

@@ -39,7 +39,6 @@ draw_ajax_page = (response, params) ->
 		html: response
 	$(params["target"]).html(data["html"])
 	$(params["target"]).attr("data-timestamp", data["timestamp"])
-	customize_layout()
 	#запись в кэш
 	navCache params["page"],
 		html: data["html"]
@@ -51,6 +50,7 @@ draw_ajax_page = (response, params) ->
 	navCache window.location.pathname, 
 		html: $(params["target"]).html()
 		timestamp: $(params["target"]).attr("data-timestamp")
+	customize_layout()
 
 #--------------------------------------------------------------------------------------------------
 setPage = (page, params, target, success_callback = null, callback_params = null) ->
@@ -63,6 +63,7 @@ setPage = (page, params, target, success_callback = null, callback_params = null
 			page: page
 			type: "page"
 		, document.title, page
+		customize_layout()
 	else
 		window.get_ajax "#{page}", {layout: false, timestamp: true}, ASYNC, "GET", draw_ajax_page, {layout: false, page: page, target: target}, "json"
 
@@ -96,7 +97,6 @@ document_onclick = (e) ->
 	if /^[aA]$/.test(e.target.tagName) && /^\//.test(e.target.getAttribute("href"))
 		e.preventDefault()
 		setPage $(e.target).attr("href"), {}, "#content"
-	customize_layout()
 	
 #--------------------------------------------------------------------------------------------------
 customize_layout = ->

@@ -99,6 +99,7 @@ document_onclick = (e) ->
 	
 #--------------------------------------------------------------------------------------------------
 customize_layout = ->
+	window.restore_index()
 	to_index_items = ["#ads_index_mini", "#to_home"]
 	if $(".ads_list").length < 1 
 		index_content = window.localStorage.getItem("ads_list")
@@ -114,5 +115,12 @@ customize_layout = ->
 			$(item_to_show).css
 				display: "none"
 		$("#ads_index_mini").html("")
-	window.doc_ready()
+	for ad_item in $(".ad_item")
+#		console.log $(ad_item).children("a")[0].getAttribute("href"), window.location.pathname, $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
+		if $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
+			$(ad_item).removeClass("current")
+		else
+			console.log ad_item
+			$(ad_item).addClass("current")
+#	window.doc_ready()
 

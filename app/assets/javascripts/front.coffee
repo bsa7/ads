@@ -29,7 +29,6 @@ window.doc_ready = ->
 	$("#ads_index_mini").scroll ->
 		infinite_ajax_scroll(this)
 	convert_data_datetime()
-	window.restore_index()
 
 #--------------------------------------------------------------------------------------------------
 infinite_ajax_scroll = (elem) ->

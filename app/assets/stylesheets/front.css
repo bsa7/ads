@@ -367,6 +367,7 @@ textarea.form-control {
 	background-color: #fefefe;
 	text-align: left;
 	cursor: pointer;
+	border-left: 3px solid white;
 }
 
 .ad_item p, .ad_item img {
@@ -389,6 +390,11 @@ textarea.form-control {
 
 .ad_item:hover {
 	background-color: #eeeeee;
+	border-left: 3px solid navy;
+}
+
+.ad_item.current {
+	border-left: 3px solid navy;
 }
 
 .ad_item .ad_created_at {

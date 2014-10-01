@@ -97,12 +97,19 @@ window.draw_index = (response, params) ->
 		if fn
 			$("#content > .ads_list")[fn]($(response).children())
 	convert_data_datetime()
-	for ad_item in $(".ad_item")
+	current_index = 0
+	for ad_item, index in $(".ad_item")
 		if $(ad_item).children("a")[0].getAttribute("href") != window.location.pathname
 			$(ad_item).removeClass("current")
 		else
-			$(ad_item).addClass("current")
-
+			item = $(ad_item)
+			item.addClass("current")
+			current_scroll = $("#ads_index_mini").scrollTop()
+			index_height = $("#ads_index_mini").height()
+			item_position = item.position().top
+			item_height = item.height()
+			if item_position + item_height > index_height || item_position < 0
+				$("#ads_index_mini").scrollTop(item_position + current_scroll)
 #--------------------------------------------------------------------------------------------------
 scrolled_to_bottom_percent = (o) ->
 	$(o).scrollTop() / (o.scrollHeight - $(o).height())

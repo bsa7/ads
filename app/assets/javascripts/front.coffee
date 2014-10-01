@@ -75,6 +75,7 @@ convert_data_datetime = ->
 
 #-- if we receive new portion of ads from server, index must be updated by some params and received html -
 window.update_index = (data, params) ->
+	params["no_scroll"] = "true"
 	window.draw_index data, params
 	window.localStorage.removeItem("not_maintained_request")
 
@@ -104,12 +105,14 @@ window.draw_index = (response, params) ->
 		else
 			item = $(ad_item)
 			item.addClass("current")
-			current_scroll = $("#ads_index_mini").scrollTop()
-			index_height = $("#ads_index_mini").height()
-			item_position = item.position().top
-			item_height = item.height()
-			if item_position + item_height > index_height || item_position < 0
-				$("#ads_index_mini").scrollTop(item_position + current_scroll)
+			if !params || !params["no_scroll"]
+				current_scroll = $("#ads_index_mini").scrollTop()
+				index_height = $("#ads_index_mini").height()
+				item_position = item.position().top
+				item_height = item.height()
+				if item_position + item_height > index_height || item_position < 0
+					$("#ads_index_mini").scrollTop(item_position + current_scroll)
+
 #--------------------------------------------------------------------------------------------------
 scrolled_to_bottom_percent = (o) ->
 	$(o).scrollTop() / (o.scrollHeight - $(o).height())

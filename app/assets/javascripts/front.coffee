@@ -87,8 +87,9 @@ window.draw_index = (response, params) ->
 			if fn
 				$(".ads_list")[fn]($(response).children())
 			else
-				$(".ads_list").replaceWith($(response))
-				$("#ads_index_mini h1").remove()
+				if $(".ads_list").html().length < response.length
+					$(".ads_list").replaceWith($(response))
+					$("#ads_index_mini h1").remove()
 		else
 			$("#ads_index_mini").html(response)
 			$("#ads_index_mini h1").remove()

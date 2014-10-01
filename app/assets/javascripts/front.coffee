@@ -57,7 +57,7 @@ window.store_index = ->
 	index_content2 = $("#content > .ads_list").parent().html() || ""
 	index_content = if index_content1.length > index_content2.length then index_content1 else index_content2
 	cache = window.localStorage.getItem("ads_list")
-	if index_content && cache && index_content.length > cache.length
+	if index_content && cache && index_content.length > cache.length || index_content
 		window.localStorage.setItem("ads_list", index_content)
 
 #--------------------------------------------------------------------------------------------------

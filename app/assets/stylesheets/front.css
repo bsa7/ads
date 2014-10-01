@@ -369,10 +369,14 @@ textarea.form-control {
 	cursor: pointer;
 }
 
+.ad_item p, .ad_item img {
+	pointer-events: none;
+
+}
+
 .ad_item p {
 	display: inline;
 	vertical-align: top;
-	pointer-events: none;
 }
 
 .ad_item a {

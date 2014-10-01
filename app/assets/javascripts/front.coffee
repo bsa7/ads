@@ -255,7 +255,7 @@ set_file_listener = ->
 						width: pic_scaled_width
 					return
 				).attr("src", image_base64)
-				upload @file, onSuccess, onError, onProgress, @file_id
+				upload @file, onUploadSuccess, onUploadError, onUploadProgress, @file_id
 
 #--------------------------------------------------------------------------------------------------
 onUploadSuccess = (e, bar_id) ->
@@ -279,7 +279,7 @@ onUploadProgress = (loaded, total, bar_id) ->
 	$("##{bar_id} progress").attr("value", "#{loaded / total * 100}")
 
 #-- Upload one file to host ---------------------------------------------------------------------
-upload = (file, onSuccess, onError, onProgress, bar_id) ->
+upload = (file, onUploadSuccess, onUploadError, onUploadProgress, bar_id) ->
 	xhr = new XMLHttpRequest()
 	xhr.onload = xhr.onerror = ->
 		if @status isnt 200

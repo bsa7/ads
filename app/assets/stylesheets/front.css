@@ -318,9 +318,16 @@ input.file {
 
 .img_comment {
 	margin-top: 2px;
-	margin-bottom: 2px;
+	margin-bottom: 7px;
+	font-family: monospace;
+	font-size: 11px;
+	width: inherit;
+	overflow-x: hidden;
 }
 
+textarea.thumb-caption {
+	overflow: hidden;
+}
 
 textarea.form-control {
 	display: block;
@@ -495,6 +502,14 @@ textarea.form-control {
 	width: 100%;
 	height: 50%;
 	text-align: left;
+}
+
+textarea.ad_text {
+	border: 1px solid #aaa;
+	width: 100%;
+	height: 200px;
+	text-align: left;
+	padding: 5px;
 }
 
 .ad_show .ad_images {

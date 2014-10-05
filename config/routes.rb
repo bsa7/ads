@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-	scope "/ads" do
+	scope "/объявления" do
 		post '/upload_image' => 'images#upload'
 		post '/add_ads' => 'classified_ads#create'
 		get '/ad/:id(.:format)' => 'classified_ads#show'

@@ -7,7 +7,7 @@
 				- if ad.images.first
 					%img{src: "/system/uploads/#{ad.images.first.filename}"}
 				%p
-					= ad.plain_text.first_n_words Count_words_in_ads_preview
+					= $markdown.render(ad.plain_text.first_n_words(Count_words_in_ads_preview)).html_safe
 				.ad_created_at
 					%p{"data-datetime" => ad.created_at}
 

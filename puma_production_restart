@@ -1,5 +1,0 @@
-mkdir -p /tmp/shared/pids
-mkdir -p /tmp/shared/sockets
-kill -9 `cat /tmp/shared/pids/ads.pid`
-rm -f /tmp/shared/sockets/ads.sock
-RAILS_ENV=`cat ../../env` puma --config /home/slon/projects/ads/shared/config/puma.rb

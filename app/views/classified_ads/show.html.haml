@@ -2,7 +2,7 @@
 	.title
 		= I18n.t :created_at
 		%p{"data-datetime" => @ad.created_at}
-	.ad_text
+	.ad_text.markdown
 		= $markdown.render(@ad.plain_text).html_safe
 	.ad_images
 		- @ad.images.each do |ad_image|

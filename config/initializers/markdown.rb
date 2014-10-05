@@ -6,6 +6,6 @@ options = {
 	lax_html_blocks: true,
 	strikethrough: true,
 	superscript: true,
-	space_after_headers: true
+#	space_after_headers: true
 }
 $markdown = Redcarpet::Markdown.new(renderer, options)

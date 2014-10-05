@@ -133,7 +133,7 @@ img {
 	overflow-y: auto;
 }
 
-#content h1 {
+#content > h1 {
 	padding: 20px 10px;
 }
 
@@ -197,12 +197,65 @@ img {
 	position: relative;
 }
 
-.ad_text {
+.markdown {
 	width: 600px;
 	height: 150px;
 	border: 2px solid #eaeaea;
 	vertical-align: top;
 	clear: both;
+	padding: 30px;
+	overflow: hidden;
+	font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	word-wrap: break-word;
+}
+
+.markdown ol {
+	padding-left: 2em;
+	display: block;
+	list-style-type: decimal;
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	-webkit-padding-start: 40px;
+}
+
+.markdown ol li {
+	display: list-item;
+	text-align: -webkit-match-parent;
+	list-style-type: circle;
+}
+
+.markdown blockquote {
+	padding: 0 15px;
+	color: #777;
+	border-left: 4px solid #ddd;
+	margin-top: 0;
+	margin-bottom: 16px;
+	display: block;
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 40px;
+	-webkit-margin-end: 40px;
+}
+
+.markdown h1 {
+	padding-bottom: 0.3em;
+	font-size: 2.25em;
+	line-height: 1.2;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 16px;
+	font-weight: bold;
+	margin: 0.67em 0;
+}
+
+.markdown h2 {
+	padding-bottom: 0.3em;
+	font-size: 1.75em;
+	line-height: 1.225;
+	border-bottom: 1px solid #eee;
 }
 
 .ad_images {
